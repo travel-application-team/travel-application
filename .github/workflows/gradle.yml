@@ -24,9 +24,9 @@ jobs:
       run: |
         mkdir -p src/main/resources
         mkdir -p src/test/resources
-        echo "${{ secrets.KAKAO_REST_API_KEY }}" > src/main/resources/application.properties
-        echo "${{ secrets.GOOGLE_CLIENT_SECRET }}" > src/main/resources/application-auth.properties
-        echo "${{ secrets.NAVER_CLIENT_SECRET }}" > src/main/resources/application-auth.properties
+        echo "${{ secrets.KAKAO_REST_API_KEY }}" > ./src/main/resources/application.properties
+        echo "${{ secrets.GOOGLE_CLIENT_SECRET }}" > ./src/main/resources/application-auth.properties
+        echo "${{ secrets.NAVER_CLIENT_SECRET }}" > ./src/main/resources/application-auth.properties
         
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
