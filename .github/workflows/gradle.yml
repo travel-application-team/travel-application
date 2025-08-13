@@ -12,6 +12,23 @@ jobs:
     permissions:
       contents: read
 
+    env:
+      SPRING_DATA_MONGODB_URL: mongodb://${{ secrets.MONGO_ROOT_USER }}:${{ secrets.MONGO_ROOT_PASS }}@localhost:27017/testdb
+
+    services:
+      mongodb:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASS }}
+        options: >-
+          --health-cmd="mongo --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
@@ -33,20 +50,3 @@ jobs:
       
     - name: Build with Gradle Wrapper
       run: ./gradlew clean build
-
-  dependency-submission:
-
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
