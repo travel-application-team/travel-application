@@ -13,12 +13,13 @@ import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.auth.dto.SessionUser;
 import travel.travelapplication.constant.Status;
 import travel.travelapplication.dto.userplan.LikedPlaceList;
+import travel.travelapplication.dto.userplan.UpdateUserPlanInfoRequest;
+import travel.travelapplication.dto.userplan.UserPlanInfoResponse;
 import travel.travelapplication.place.application.PlaceService;
 import travel.travelapplication.place.application.ProvCityService;
 import travel.travelapplication.place.application.RecommendationService;
 import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.place.domain.ProvCity;
-import travel.travelapplication.place.domain.Recommendation;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.domain.UserPlan;
@@ -26,8 +27,6 @@ import travel.travelapplication.user.application.UserPlanService;
 
 import java.util.*;
 import travel.travelapplication.user.repository.UserPlanRepository;
-
-import static travel.travelapplication.dto.userplan.UserPlanDto.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -59,7 +58,6 @@ public class UserPlanController {
 
     @GetMapping("/new")
     public String createUserPlan(Model model) {
-        model.addAttribute("userPlan", new UserPlanInfoDto());
         model.addAttribute("infoSubmitted", false);
 
         return "html/new-user-plan";
@@ -109,18 +107,18 @@ public class UserPlanController {
 
     @PostMapping("/plan-info")
     public String saveUserPlan(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-                               @ModelAttribute("userPlan") UserPlanInfoDto userPlanInfoDto,
+                               @ModelAttribute("userPlan") UserPlanInfoResponse userPlanInfoResponse,
                                Model model)
             throws IllegalAccessException {
         User userInfo = userService.findUserByEmail(oAuth2User);
-        UserPlan userPlan = userPlanService.createNewUserPlan(userInfo, userPlanInfoDto);
+        UserPlan userPlan = userPlanService.createNewUserPlan(userInfo, userPlanInfoResponse);
         recommendationService.sendUserPlanInfo(userPlan, userInfo);
 
         model.addAttribute("infoSubmitted", true);
 
         model.addAttribute("userPlanId", userPlan.getId());
         log.info("userPlanId: {} ", userPlan.getId());
-        model.addAttribute("userPlan", userPlanInfoDto);
+        model.addAttribute("userPlan", userPlanInfoResponse);
         model.addAttribute("user", userInfo);
 
         model.addAttribute("likedPlaces", userInfo.getLikedPlaces());
@@ -155,7 +153,7 @@ public class UserPlanController {
     @ResponseBody
     public Map<String, Object> savePlacesToUserPlan(@RequestBody List<String> selectedPlaceId,
                                                     Model model,
-                                                    UserPlanInfoDto userPlanInfo,
+                                                    UserPlanInfoResponse userPlanInfo,
                                                     @AuthenticationPrincipal CustomOAuth2User oAuth2User)
             throws IllegalAccessException {
         User user = userService.findUserByEmail(oAuth2User);
@@ -197,7 +195,7 @@ public class UserPlanController {
 
     @PostMapping("/{userPlanId}/user-plan-info")
     public String updateUserPlanNameAndStatus(@PathVariable("userPlanId") ObjectId userPlanId,
-                                              @ModelAttribute("updateUserPlan") UpdateUserPlanInfoDto userPlanInfo,
+                                              @ModelAttribute("updateUserPlan") UpdateUserPlanInfoRequest userPlanInfo,
                                               @AuthenticationPrincipal CustomOAuth2User oAuth2User)
             throws IllegalAccessException {
         User user = userService.findUserByEmail(oAuth2User);

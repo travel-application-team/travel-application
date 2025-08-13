@@ -1,18 +1,16 @@
 package travel.travelapplication.user.application;
 
-import static travel.travelapplication.dto.userplan.UserPlanDto.UpdateUserPlanInfoDto;
-import static travel.travelapplication.dto.userplan.UserPlanDto.UserPlanInfoDto;
-
 import java.util.LinkedList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.constant.Status;
+import travel.travelapplication.dto.userplan.UpdateUserPlanInfoRequest;
+import travel.travelapplication.dto.userplan.UserPlanInfoResponse;
 import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.plan.application.PlanService;
 import travel.travelapplication.plan.domain.Plan;
@@ -28,14 +26,13 @@ import org.springframework.data.domain.Sort;
 public class UserPlanService {
 
     private final UserService userService;
-    @Autowired
     private MongoTemplate mongoTemplate;
     private final UserPlanRepository userPlanRepository;
     private final PlanRepository planRepository;
     private final PlanService planService;
 
-    public UserPlan createNewUserPlan(User user, UserPlanInfoDto userPlanInfoDto) {
-        UserPlan userPlan = userPlanInfoDto.toEntity();
+    public UserPlan createNewUserPlan(User user, UserPlanInfoResponse userPlanInfoResponse) {
+        UserPlan userPlan = userPlanInfoResponse.toEntity();
 
         UserPlan savedUserPlan = userPlanRepository.insert(userPlan);
 
@@ -140,7 +137,7 @@ public class UserPlanService {
         userPlanRepository.save(userPlan);
     }
 
-    public void updateUserPlanInfo(User user, UserPlan userPlan, UpdateUserPlanInfoDto userPlanInfoDto) {
+    public void updateUserPlanInfo(User user, UserPlan userPlan, UpdateUserPlanInfoRequest userPlanInfoDto) {
         UserPlan updatedUserPlan = updateNameAndStatus(userPlan, userPlanInfoDto);
 
         user.update(user);
@@ -153,15 +150,15 @@ public class UserPlanService {
         }
     }
 
-    private UserPlan updateNameAndStatus(UserPlan userPlan, UpdateUserPlanInfoDto userPlanInfoDto) {
+    private UserPlan updateNameAndStatus(UserPlan userPlan, UpdateUserPlanInfoRequest request) {
         UserPlan updatedUserPlan = UserPlan.builder()
-                .name(userPlanInfoDto.getName())
+                .name(request.name())
                 .startDate(userPlan.getStartDate())
                 .endDate(userPlan.getEndDate())
                 .budget(userPlan.getBudget())
                 .city(userPlan.getCity())
                 .district(userPlan.getDistrict())
-                .status(userPlanInfoDto.getStatus())
+                .status(request.status())
                 .places(userPlan.getPlaces())
                 .routes(userPlan.getRoutes())
                 .build();
