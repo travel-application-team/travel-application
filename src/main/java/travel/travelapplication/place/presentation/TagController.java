@@ -37,15 +37,15 @@ public class TagController {
 
     @PostMapping("/tag")
     public String addTag(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-                         @ModelAttribute TagListResponse tagListResponse, Model model) throws IllegalAccessException {
-        if(tagListResponse.tagList().size() < 3) {
+                         @ModelAttribute TagListResponse tagListForm, Model model) throws IllegalAccessException {
+        if(tagListForm.tagList().size() < 3) {
             model.addAttribute("errorMessage", "3개 이상의 태그를 선택하세요.");
             return "tagForm";
         }
 
         User user = userService.findUserByEmail(oAuth2User);
 
-        userService.addTag(user, tagListResponse.tagList());
+        userService.addTag(user, tagListForm.tagList());
 
         return "redirect:/";
     }
