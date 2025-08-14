@@ -1,9 +1,8 @@
-package travel.travelapplication.user.repository;
+package travel.travelapplication.userplan.repository;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
-import travel.travelapplication.user.domain.SavedPlan;
+import travel.travelapplication.userplan.domain.SavedPlan;
 
 public interface SavedPlanRepository extends MongoRepository<SavedPlan, ObjectId> {
 }

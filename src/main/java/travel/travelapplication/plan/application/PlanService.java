@@ -13,7 +13,7 @@ import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.plan.repository.CommentRepository;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
-import travel.travelapplication.user.domain.UserPlan;
+import travel.travelapplication.userplan.domain.UserPlan;
 import travel.travelapplication.plan.repository.PlanRepository;
 
 @RequiredArgsConstructor

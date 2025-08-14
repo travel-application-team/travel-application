@@ -19,10 +19,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import travel.travelapplication.auth.dto.SessionUser;
-import travel.travelapplication.dto.userplan.UserPlanInfoRequest;
+import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
 import travel.travelapplication.place.domain.Recommendation;
 import travel.travelapplication.user.domain.User;
-import travel.travelapplication.user.domain.UserPlan;
+import travel.travelapplication.userplan.domain.UserPlan;
 
 @Service
 @Getter

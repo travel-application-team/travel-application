@@ -15,7 +15,7 @@ import travel.travelapplication.dto.place.ApiRequest;
 import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.place.response.MapApiResponse;
 import travel.travelapplication.place.response.MobilityApiResponse;
-import travel.travelapplication.user.domain.UserPlan;
+import travel.travelapplication.userplan.domain.UserPlan;
 
 import java.util.ArrayList;
 import java.util.LinkedList;

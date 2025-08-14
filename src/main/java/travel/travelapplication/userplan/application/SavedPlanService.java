@@ -1,12 +1,11 @@
-package travel.travelapplication.user.application;
+package travel.travelapplication.userplan.application;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
-import travel.travelapplication.user.repository.SavedPlanRepository;
-import travel.travelapplication.user.domain.SavedPlan;
+import travel.travelapplication.userplan.repository.SavedPlanRepository;
+import travel.travelapplication.userplan.domain.SavedPlan;
 
 @AllArgsConstructor
 @Service

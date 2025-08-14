@@ -1,4 +1,4 @@
-package travel.travelapplication.user.presentation;
+package travel.travelapplication.userplan.presentation;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
@@ -6,12 +6,11 @@ import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import travel.travelapplication.user.application.SavedPlanService;
-import travel.travelapplication.user.domain.SavedPlan;
+import travel.travelapplication.userplan.application.SavedPlanService;
+import travel.travelapplication.userplan.domain.SavedPlan;
 
 @Transactional
 @RestController

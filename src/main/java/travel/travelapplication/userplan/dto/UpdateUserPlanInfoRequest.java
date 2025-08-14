@@ -1,4 +1,4 @@
-package travel.travelapplication.dto.userplan;
+package travel.travelapplication.userplan.dto;
 
 import travel.travelapplication.constant.Status;
 

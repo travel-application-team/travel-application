@@ -3,7 +3,6 @@ package travel.travelapplication.plan.presentation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Mod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -12,18 +11,17 @@ import org.springframework.ui.Model;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.dto.plan.CommentDto;
 import travel.travelapplication.dto.plan.ReplyDto;
-import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.plan.application.CommentService;
 import travel.travelapplication.plan.domain.Comment;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.plan.application.PlanService;
 import travel.travelapplication.plan.repository.PlanRepository;
-import travel.travelapplication.user.application.UserPlanService;
+import travel.travelapplication.userplan.application.UserPlanService;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
 
 import java.util.List;
-import travel.travelapplication.user.domain.UserPlan;
+import travel.travelapplication.userplan.domain.UserPlan;
 
 @RequiredArgsConstructor
 @Controller

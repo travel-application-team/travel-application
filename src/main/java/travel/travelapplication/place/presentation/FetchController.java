@@ -3,7 +3,7 @@ package travel.travelapplication.place.presentation;
 import org.springframework.web.bind.annotation.RestController;
 import travel.travelapplication.place.application.RecommendationService;
 import travel.travelapplication.plan.repository.PlanRepository;
-import travel.travelapplication.user.repository.UserPlanRepository;
+import travel.travelapplication.userplan.repository.UserPlanRepository;
 
 @RestController
 public class FetchController {

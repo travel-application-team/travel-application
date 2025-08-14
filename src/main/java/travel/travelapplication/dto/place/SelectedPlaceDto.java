@@ -1,4 +1,4 @@
-package travel.travelapplication.dto.userplan;
+package travel.travelapplication.dto.place;
 
 import lombok.Getter;
 import travel.travelapplication.place.domain.Place;

@@ -1,4 +1,4 @@
-package travel.travelapplication.user.domain;
+package travel.travelapplication.userplan.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

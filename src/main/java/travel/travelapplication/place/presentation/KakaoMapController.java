@@ -16,8 +16,8 @@ import travel.travelapplication.place.application.KakaoMobilityService;
 import travel.travelapplication.place.response.MapApiResponse;
 import travel.travelapplication.place.response.LocationDto;
 import travel.travelapplication.place.response.MobilityApiResponse;
-import travel.travelapplication.user.application.UserPlanService;
-import travel.travelapplication.user.domain.UserPlan;
+import travel.travelapplication.userplan.application.UserPlanService;
+import travel.travelapplication.userplan.domain.UserPlan;
 
 import java.util.ArrayList;
 import java.util.List;

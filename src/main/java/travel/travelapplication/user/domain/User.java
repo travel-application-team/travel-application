@@ -12,6 +12,7 @@ import travel.travelapplication.plan.domain.Plan;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import travel.travelapplication.userplan.domain.UserPlan;
 
 @Document(collection = "User")
 @Getter

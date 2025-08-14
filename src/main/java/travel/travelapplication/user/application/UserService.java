@@ -10,8 +10,8 @@ import travel.travelapplication.place.domain.Tag;
 import travel.travelapplication.place.repository.TagRepository;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.user.domain.User;
-import travel.travelapplication.user.domain.UserPlan;
-import travel.travelapplication.user.repository.UserPlanRepository;
+import travel.travelapplication.userplan.domain.UserPlan;
+import travel.travelapplication.userplan.repository.UserPlanRepository;
 import travel.travelapplication.user.repository.UserRepository;
 
 import java.util.List;
