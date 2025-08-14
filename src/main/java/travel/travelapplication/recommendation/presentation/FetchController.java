@@ -1,7 +1,7 @@
-package travel.travelapplication.place.presentation;
+package travel.travelapplication.recommendation.presentation;
 
 import org.springframework.web.bind.annotation.RestController;
-import travel.travelapplication.place.application.RecommendationService;
+import travel.travelapplication.recommendation.application.RecommendationService;
 import travel.travelapplication.plan.repository.PlanRepository;
 import travel.travelapplication.userplan.repository.UserPlanRepository;
 

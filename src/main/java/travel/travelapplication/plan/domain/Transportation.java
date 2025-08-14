@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
-import travel.travelapplication.constant.TransportationType;
+import travel.travelapplication.plan.constant.TransportationType;
 
 @Document("Transportation")
 @Getter

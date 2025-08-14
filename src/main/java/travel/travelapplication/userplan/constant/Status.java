@@ -1,4 +1,4 @@
-package travel.travelapplication.constant;
+package travel.travelapplication.userplan.constant;
 
 public enum Status {
     PUBLIC("공개"), PRIVATE("비공개");

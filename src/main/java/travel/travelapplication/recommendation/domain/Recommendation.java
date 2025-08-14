@@ -1,9 +1,11 @@
-package travel.travelapplication.place.domain;
+package travel.travelapplication.recommendation.domain;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Document;
 import travel.travelapplication.auth.dto.SessionUser;
 
+@Document(collection = "Recommendation")
 @Getter
 @Setter
 public class Recommendation {

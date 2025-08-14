@@ -1,4 +1,4 @@
-package travel.travelapplication.constant;
+package travel.travelapplication.place.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

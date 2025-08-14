@@ -1,4 +1,4 @@
-package travel.travelapplication.constant;
+package travel.travelapplication.plan.constant;
 
 public enum TransportationType {
     BUS,

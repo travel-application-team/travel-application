@@ -1,6 +1,6 @@
 package travel.travelapplication.userplan.dto;
 
-import travel.travelapplication.constant.Status;
+import travel.travelapplication.userplan.constant.Status;
 
 public record UpdateUserPlanInfoRequest(
     String name,

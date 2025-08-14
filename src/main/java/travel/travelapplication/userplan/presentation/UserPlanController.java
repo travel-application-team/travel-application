@@ -11,13 +11,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.auth.dto.SessionUser;
-import travel.travelapplication.constant.Status;
-import travel.travelapplication.dto.place.LikedPlaceList;
+import travel.travelapplication.userplan.constant.Status;
 import travel.travelapplication.userplan.dto.UpdateUserPlanInfoRequest;
-import travel.travelapplication.userplan.dto.UserPlanInfoResponse;
+import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
 import travel.travelapplication.place.application.PlaceService;
 import travel.travelapplication.place.application.ProvCityService;
-import travel.travelapplication.place.application.RecommendationService;
+import travel.travelapplication.recommendation.application.RecommendationService;
 import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.place.domain.ProvCity;
 import travel.travelapplication.user.application.UserService;
@@ -107,18 +106,18 @@ public class UserPlanController {
 
   @PostMapping("/plan-info")
   public String saveUserPlan(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-      @ModelAttribute("userPlan") UserPlanInfoResponse userPlanInfoResponse,
+      @ModelAttribute("userPlan") UserPlanInfoRequest userPlanInfoRequest,
       Model model)
       throws IllegalAccessException {
     User userInfo = userService.findUserByEmail(oAuth2User);
-    UserPlan userPlan = userPlanService.createNewUserPlan(userInfo, userPlanInfoResponse);
+    UserPlan userPlan = userPlanService.createNewUserPlan(userInfo, userPlanInfoRequest);
     recommendationService.sendUserPlanInfo(userPlan, userInfo);
 
     model.addAttribute("infoSubmitted", true);
 
     model.addAttribute("userPlanId", userPlan.getId());
     log.info("userPlanId: {} ", userPlan.getId());
-    model.addAttribute("userPlan", userPlanInfoResponse);
+    model.addAttribute("userPlan", userPlanInfoRequest);
     model.addAttribute("user", userInfo);
 
     model.addAttribute("likedPlaces", userInfo.getLikedPlaces());
@@ -144,7 +143,6 @@ public class UserPlanController {
     List<SessionUser> places = (List<SessionUser>) session.getAttribute("recommendation-result");
 
     model.addAttribute("userPlan", userPlan);
-    model.addAttribute("likedPlaceList", new LikedPlaceList());
     model.addAttribute("places", places);
 
     return "test/selectLikedPlacesForm";
@@ -154,7 +152,6 @@ public class UserPlanController {
   @ResponseBody
   public Map<String, Object> savePlacesToUserPlan(@RequestBody List<String> selectedPlaceId,
       Model model,
-      UserPlanInfoResponse userPlanInfo,
       @AuthenticationPrincipal CustomOAuth2User oAuth2User)
       throws IllegalAccessException {
     User user = userService.findUserByEmail(oAuth2User);

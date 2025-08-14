@@ -8,9 +8,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
-import travel.travelapplication.constant.Status;
+import travel.travelapplication.userplan.constant.Status;
 import travel.travelapplication.userplan.dto.UpdateUserPlanInfoRequest;
-import travel.travelapplication.userplan.dto.UserPlanInfoResponse;
+import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
 import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.plan.application.PlanService;
 import travel.travelapplication.plan.domain.Plan;
@@ -32,8 +32,8 @@ public class UserPlanService {
   private final PlanRepository planRepository;
   private final PlanService planService;
 
-  public UserPlan createNewUserPlan(User user, UserPlanInfoResponse userPlanInfoResponse) {
-    UserPlan userPlan = userPlanInfoResponse.toEntity();
+  public UserPlan createNewUserPlan(User user, UserPlanInfoRequest userPlanInfoRequest) {
+    UserPlan userPlan = userPlanInfoRequest.toEntity();
 
     UserPlan savedUserPlan = userPlanRepository.insert(userPlan);
 

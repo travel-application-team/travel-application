@@ -125,7 +125,7 @@
             const content = $('#commentContent').val();
             const planId = /*[[${plan.id}]]*/ '[[${plan.id}]]';
             const email = /*[[${#authentication.getPrincipal().getEmail()}]]*/ '[[${#authentication.getPrincipal().getEmail()}]]';
-            const commentDto={
+            const commentRequest={
                 content: content,
                 email: email
             };
@@ -136,7 +136,7 @@
                 url: `/plans/community/comment/${planId}`,
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify(commentDto),
+                data: JSON.stringify(commentRequest),
                 success: function(response) {
                     if(response) {
                         const newCommentElement = $(`
@@ -185,7 +185,7 @@
         const content=$(`#replyContent-${commentId}`).val();
         const email=/*[[${#authentication.getPrincipal().getEmail()}]]*/ '[[${#authentication.getPrincipal().getEmail()}]]';
 
-        const replyDto={
+        const replyRequest={
             content: content,
             email: email
         };
@@ -199,7 +199,7 @@
             url: `/plans/community/reply/${commentId}`,
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(replyDto),
+            data: JSON.stringify(replyRequest),
             success: function(response) {
                 if(response) {
                     const replyElement=$(`

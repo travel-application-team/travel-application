@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import travel.travelapplication.dto.place.ApiRequest;
+import travel.travelapplication.place.dto.ApiRequest;
 import travel.travelapplication.place.domain.Place;
-import travel.travelapplication.place.response.MapApiResponse;
-import travel.travelapplication.place.response.MobilityApiResponse;
+import travel.travelapplication.place.dto.MapApiResponse;
+import travel.travelapplication.place.dto.MobilityApiResponse;
 import travel.travelapplication.userplan.domain.UserPlan;
 
 import java.util.ArrayList;

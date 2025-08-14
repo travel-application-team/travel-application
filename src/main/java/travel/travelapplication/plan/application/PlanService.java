@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
-import travel.travelapplication.dto.plan.CommentDto;
+import travel.travelapplication.plan.dto.CommentRequest;
 import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.plan.domain.Comment;
 import travel.travelapplication.plan.domain.Plan;
@@ -50,10 +50,10 @@ public class PlanService {
         return !isSaved;
     }
 
-    public void saveCommentToPlan(Plan plan, CommentDto commentDto) { // 커뮤니티 Plan 댓글 저장 기능 (답글 제외)
+    public void saveCommentToPlan(Plan plan, CommentRequest commentRequest) { // 커뮤니티 Plan 댓글 저장 기능 (답글 제외)
         List<Comment> comments = plan.getComments();
 
-        Comment comment=commentDto.toEntity();
+        Comment comment= commentRequest.toEntity();
         commentRepository.insert(comment);
 
         comments.add(comment);

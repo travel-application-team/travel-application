@@ -9,7 +9,7 @@ import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
-import travel.travelapplication.constant.Status;
+import travel.travelapplication.userplan.constant.Status;
 import travel.travelapplication.place.domain.Place;
 import travel.travelapplication.plan.domain.Route;
 

@@ -13,9 +13,9 @@ import reactor.core.publisher.Mono;
 import travel.travelapplication.auth.dto.SessionUser;
 import travel.travelapplication.place.application.KakaoMapService;
 import travel.travelapplication.place.application.KakaoMobilityService;
-import travel.travelapplication.place.response.MapApiResponse;
-import travel.travelapplication.place.response.LocationDto;
-import travel.travelapplication.place.response.MobilityApiResponse;
+import travel.travelapplication.place.dto.MapApiResponse;
+import travel.travelapplication.place.dto.LocationResponse;
+import travel.travelapplication.place.dto.MobilityApiResponse;
 import travel.travelapplication.userplan.application.UserPlanService;
 import travel.travelapplication.userplan.domain.UserPlan;
 
@@ -49,10 +49,10 @@ public class KakaoMapController {
 
     @GetMapping("/map-marker")
     public String showMapWithMarker(Model model) {
-        List<LocationDto> locList=new ArrayList<>();
+        List<LocationResponse> locList=new ArrayList<>();
 
         for(MapApiResponse response:list) {
-            locList.add(new LocationDto(response.getPlaceName(), response.getY(), response.getX())); // X, Y 방향 유의
+            locList.add(new LocationResponse(response.placeName(), response.y(), response.x())); // X, Y 방향 유의
         }
         model.addAttribute("locList", locList);
 
@@ -66,8 +66,8 @@ public class KakaoMapController {
 
         int distance=0, duration=0;
         for(MobilityApiResponse response:apiResult) {
-            distance+= response.getDistance();
-            duration+= response.getDuration();
+            distance+= response.distance();
+            duration+= response.duration();
         }
 
         String distanceStr;

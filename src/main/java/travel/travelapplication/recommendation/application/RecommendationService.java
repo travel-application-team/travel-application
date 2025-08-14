@@ -1,4 +1,4 @@
-package travel.travelapplication.place.application;
+package travel.travelapplication.recommendation.application;
 
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -19,8 +19,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.Builder;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import travel.travelapplication.auth.dto.SessionUser;
-import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
-import travel.travelapplication.place.domain.Recommendation;
+import travel.travelapplication.userplan.dto.SendUserPlanInfoRequest;
+import travel.travelapplication.recommendation.domain.Recommendation;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.userplan.domain.UserPlan;
 
@@ -60,7 +60,7 @@ public class RecommendationService {
 
         long period = ChronoUnit.DAYS.between(userPlan.getStartDate(), userPlan.getEndDate());
 
-        UserPlanInfoRequest request = new UserPlanInfoRequest(user.getEmail(), userPlan.getCity(),
+        SendUserPlanInfoRequest request = new SendUserPlanInfoRequest(user.getEmail(), userPlan.getCity(),
                 userPlan.getDistrict(), period);
 
         try {

@@ -1,4 +1,4 @@
-package travel.travelapplication.dto.place;
+package travel.travelapplication.place.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
