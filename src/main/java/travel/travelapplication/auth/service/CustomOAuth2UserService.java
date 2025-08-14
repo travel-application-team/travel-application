@@ -1,6 +1,5 @@
 package travel.travelapplication.auth.service;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,17 +11,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.auth.dto.OAuthAttributes;
-import travel.travelapplication.auth.dto.SessionUser;
-import travel.travelapplication.place.application.RecommendationService;
-import travel.travelapplication.place.domain.Recommendation;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -48,14 +40,14 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         log.info("registrationId: {}", registrationId);
 
         String userNameAttributeName = userRequest
-                .getClientRegistration().getProviderDetails()
-                .getUserInfoEndpoint().getUserNameAttributeName();
+            .getClientRegistration().getProviderDetails()
+            .getUserInfoEndpoint().getUserNameAttributeName();
 
         String role = "ROLE_USER";
         String accessToken = userRequest.getAccessToken().getTokenValue();
 
         OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
-                oAuth2User.getAttributes());
+            oAuth2User.getAttributes());
 
         User findUser = saveUser(attributes, role, accessToken);
 
@@ -66,13 +58,13 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         }
 
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority(findUser.getRole())),
-                oAuth2User.getAttributes(),
-                attributes.getNameAttributeKey(),
-                findUser.getEmail(),
-                findUser.getName(),
-                findUser.getRole(),
-                registrationId
+            Collections.singleton(new SimpleGrantedAuthority(findUser.getRole())),
+            oAuth2User.getAttributes(),
+            attributes.getNameAttributeKey(),
+            findUser.getEmail(),
+            findUser.getName(),
+            findUser.getRole(),
+            registrationId
         );
 
         log.info("customOAuth2User created: {}", customOAuth2User);
@@ -91,15 +83,15 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         if (findUser == null) {
 
             User user = User.builder()
-                    .name(name)
-                    .email(attributes.getEmail())
-                    .role(role)
-                    .accessToken(accessToken)
-                    .userPlans(null)
-                    .likedPlaces(null)
-                    .tags(null)
-                    .savedPlans(null)
-                    .build();
+                .name(name)
+                .email(attributes.getEmail())
+                .role(role)
+                .accessToken(accessToken)
+                .userPlans(null)
+                .likedPlaces(null)
+                .tags(null)
+                .savedPlans(null)
+                .build();
             userRepository.insert(user);
             return user;
         } else {
@@ -113,6 +105,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private User getUser(OAuthAttributes attributes) {
         return userRepository.findByEmail(attributes.getEmail())
-                .orElse(null);
+            .orElse(null);
     }
 }

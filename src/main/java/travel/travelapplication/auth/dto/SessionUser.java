@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class SessionUser implements Serializable {
+
     private Long placeId;
     private String name;
     private String address;
