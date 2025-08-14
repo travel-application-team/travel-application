@@ -121,9 +121,9 @@ public class KakaoMobilityService {
     }
 
     private ApiRequest.Location createApiRequestLocation(MapApiResponse response) {
-        String name = response.getPlaceName();
-        Double X = Double.parseDouble(response.getX());
-        Double Y = Double.parseDouble(response.getY());
+        String name = response.placeName();
+        Double X = Double.parseDouble(response.x());
+        Double Y = Double.parseDouble(response.y());
 
         return new ApiRequest.Location(name, X, Y);
     }

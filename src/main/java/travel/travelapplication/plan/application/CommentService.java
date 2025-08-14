@@ -35,8 +35,8 @@ public class CommentService {
 
   private Reply createNewReply(ReplyRequest replyRequest) {
     Reply reply = Reply.builder()
-        .content(replyRequest.getContent())
-        .email(replyRequest.getEmail())
+        .content(replyRequest.content())
+        .email(replyRequest.email())
         .build();
 
     return replyRepository.insert(reply);

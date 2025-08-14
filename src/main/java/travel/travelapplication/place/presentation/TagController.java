@@ -31,7 +31,7 @@ public class TagController {
     @GetMapping("/tag")
     public String tagForm(Model model) throws IllegalAccessException {
         TagListResponse tagListResponse = new TagListResponse(new LinkedList<>());
-        model.addAttribute("tagDtoList", tagListResponse);
+        model.addAttribute("tagList", tagListResponse);
         return "tagForm";
     }
 

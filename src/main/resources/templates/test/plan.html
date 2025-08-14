@@ -69,8 +69,6 @@
         <!-- comments가 비어 있을 때 -->
         <div th:if="${#lists.isEmpty(comments) or comments == null}">
             <p>아직 댓글이 없습니다. 첫 번째 댓글을 작성해보세요!</p>
-            <textarea id="commentContent" placeholder="댓글을 입력하세요"></textarea><br>
-            <button class="submitComment" type="button">댓글 등록</button>
         </div>
 
         <!-- comments가 있을 때 -->
