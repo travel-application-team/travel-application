@@ -14,39 +14,39 @@ import travel.travelapplication.auth.service.CustomOAuth2UserService;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final CustomOAuth2UserService customOAuth2UserService;
+  private final CustomOAuth2UserService customOAuth2UserService;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { // 예외 처리 핸들러 추가해야 함
-        http
-            .csrf(CsrfConfigurer::disable)
-            .authorizeHttpRequests((authorizeRequests) ->
-                authorizeRequests
-                    .requestMatchers("/user/**", "/tag", "/profile/**", "/user-plan/**",
-                        "/myroom/**", "/places/**", "/plans/**").authenticated()
-                    .requestMatchers("/manager/**").hasAnyRole("ADMIN")
-                    .requestMatchers("/admin/**").hasAnyRole("ADMIN")
-                    .anyRequest().permitAll()
-            )
-            .oauth2Login((oauth2Login) ->
-                oauth2Login
-                    .loginPage("/loginForm")
-                    .userInfoEndpoint((userInfo) ->
-                        userInfo
-                            .userService(customOAuth2UserService))
-                    .defaultSuccessUrl("/home")
-            )
-            .logout((logout) ->
-                logout
-                    .logoutUrl("/logout") // logout url 다시 확인
-                    .clearAuthentication(true)
-                    .invalidateHttpSession(true)
-                    .deleteCookies("JSESSIONID")
-                    .logoutSuccessUrl("/home")
-            );
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { // 예외 처리 핸들러 추가해야 함
+    http
+        .csrf(CsrfConfigurer::disable)
+        .authorizeHttpRequests((authorizeRequests) ->
+            authorizeRequests
+                .requestMatchers("/user/**", "/tag", "/profile/**", "/user-plan/**",
+                    "/myroom/**", "/places/**", "/plans/**").authenticated()
+                .requestMatchers("/manager/**").hasAnyRole("ADMIN")
+                .requestMatchers("/admin/**").hasAnyRole("ADMIN")
+                .anyRequest().permitAll()
+        )
+        .oauth2Login((oauth2Login) ->
+            oauth2Login
+                .loginPage("/loginForm")
+                .userInfoEndpoint((userInfo) ->
+                    userInfo
+                        .userService(customOAuth2UserService))
+                .defaultSuccessUrl("/home")
+        )
+        .logout((logout) ->
+            logout
+                .logoutUrl("/logout") // logout url 다시 확인
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/home")
+        );
 
-        return http.build();
-    }
+    return http.build();
+  }
 
 }
 

@@ -21,90 +21,90 @@ import java.util.Collections;
 @Slf4j
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+  @Override
+  public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
+    OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
+    OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        log.info("userRequest: {}", userRequest);
-        log.info("userRequest client registration: {}", userRequest.getClientRegistration());
-        log.info("access token: {}", userRequest.getAccessToken().getTokenValue());
-        log.info("attribute: {}", oAuth2User.getAttributes());
-        log.info("OAuth2 로그인 요청 진입");
+    log.info("userRequest: {}", userRequest);
+    log.info("userRequest client registration: {}", userRequest.getClientRegistration());
+    log.info("access token: {}", userRequest.getAccessToken().getTokenValue());
+    log.info("attribute: {}", oAuth2User.getAttributes());
+    log.info("OAuth2 로그인 요청 진입");
 
-        String registrationId = userRequest.getClientRegistration().getRegistrationId();
+    String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        log.info("registrationId: {}", registrationId);
+    log.info("registrationId: {}", registrationId);
 
-        String userNameAttributeName = userRequest
-            .getClientRegistration().getProviderDetails()
-            .getUserInfoEndpoint().getUserNameAttributeName();
+    String userNameAttributeName = userRequest
+        .getClientRegistration().getProviderDetails()
+        .getUserInfoEndpoint().getUserNameAttributeName();
 
-        String role = "ROLE_USER";
-        String accessToken = userRequest.getAccessToken().getTokenValue();
+    String role = "ROLE_USER";
+    String accessToken = userRequest.getAccessToken().getTokenValue();
 
-        OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
-            oAuth2User.getAttributes());
+    OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
+        oAuth2User.getAttributes());
 
-        User findUser = saveUser(attributes, role, accessToken);
+    User findUser = saveUser(attributes, role, accessToken);
 
-        String principalName = findUser.getEmail();
-        log.info("principalName: {}", principalName);
-        if (principalName == null || principalName.isEmpty()) {
-            throw new IllegalArgumentException("principalName cannot be empty");
-        }
-
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(
-            Collections.singleton(new SimpleGrantedAuthority(findUser.getRole())),
-            oAuth2User.getAttributes(),
-            attributes.getNameAttributeKey(),
-            findUser.getEmail(),
-            findUser.getName(),
-            findUser.getRole(),
-            registrationId
-        );
-
-        log.info("customOAuth2User created: {}", customOAuth2User);
-
-        return customOAuth2User;
+    String principalName = findUser.getEmail();
+    log.info("principalName: {}", principalName);
+    if (principalName == null || principalName.isEmpty()) {
+      throw new IllegalArgumentException("principalName cannot be empty");
     }
 
-    private User saveUser(OAuthAttributes attributes, String role, String accessToken) {
+    CustomOAuth2User customOAuth2User = new CustomOAuth2User(
+        Collections.singleton(new SimpleGrantedAuthority(findUser.getRole())),
+        oAuth2User.getAttributes(),
+        attributes.getNameAttributeKey(),
+        findUser.getEmail(),
+        findUser.getName(),
+        findUser.getRole(),
+        registrationId
+    );
 
-        User findUser = getUser(attributes);
-        String name = attributes.getName();
-        if (name == null) {
-            name = "anonymous";
-        }
+    log.info("customOAuth2User created: {}", customOAuth2User);
 
-        if (findUser == null) {
+    return customOAuth2User;
+  }
 
-            User user = User.builder()
-                .name(name)
-                .email(attributes.getEmail())
-                .role(role)
-                .accessToken(accessToken)
-                .userPlans(null)
-                .likedPlaces(null)
-                .tags(null)
-                .savedPlans(null)
-                .build();
-            userRepository.insert(user);
-            return user;
-        } else {
-            // 기존 유저 이름이 null인 경우 anonymous로 이름 변경
-            findUser.setName(name);
-            findUser.setAccessToken(accessToken);
-            userRepository.save(findUser);
-            return findUser;
-        }
+  private User saveUser(OAuthAttributes attributes, String role, String accessToken) {
+
+    User findUser = getUser(attributes);
+    String name = attributes.getName();
+    if (name == null) {
+      name = "anonymous";
     }
 
-    private User getUser(OAuthAttributes attributes) {
-        return userRepository.findByEmail(attributes.getEmail())
-            .orElse(null);
+    if (findUser == null) {
+
+      User user = User.builder()
+          .name(name)
+          .email(attributes.getEmail())
+          .role(role)
+          .accessToken(accessToken)
+          .userPlans(null)
+          .likedPlaces(null)
+          .tags(null)
+          .savedPlans(null)
+          .build();
+      userRepository.insert(user);
+      return user;
+    } else {
+      // 기존 유저 이름이 null인 경우 anonymous로 이름 변경
+      findUser.setName(name);
+      findUser.setAccessToken(accessToken);
+      userRepository.save(findUser);
+      return findUser;
     }
+  }
+
+  private User getUser(OAuthAttributes attributes) {
+    return userRepository.findByEmail(attributes.getEmail())
+        .orElse(null);
+  }
 }
