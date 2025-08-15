@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.auth.dto.OAuthAttributes;
+import travel.travelapplication.constant.Role;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.repository.UserRepository;
 
@@ -37,7 +38,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         .getClientRegistration().getProviderDetails()
         .getUserInfoEndpoint().getUserNameAttributeName();
 
-    String role = "ROLE_USER";
+    String role = Role.USER.getKey();
     String accessToken = userRequest.getAccessToken().getTokenValue();
 
     OAuthAttributes attributes = OAuthAttributes.of(registrationId, userNameAttributeName,
@@ -50,7 +51,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
       throw new IllegalArgumentException("principalName cannot be empty");
     }
 
-    CustomOAuth2User customOAuth2User = new CustomOAuth2User(
+    return new CustomOAuth2User(
         Collections.singleton(new SimpleGrantedAuthority(findUser.getRole())),
         oAuth2User.getAttributes(),
         attributes.getNameAttributeKey(),
@@ -59,10 +60,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         findUser.getRole(),
         registrationId
     );
-
-    log.info("customOAuth2User created: {}", customOAuth2User);
-
-    return customOAuth2User;
   }
 
   private User saveUser(OAuthAttributes attributes, String role, String accessToken) {
