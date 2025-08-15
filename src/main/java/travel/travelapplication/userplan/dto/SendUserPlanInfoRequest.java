@@ -5,6 +5,6 @@ public record SendUserPlanInfoRequest(
     String city,
     String district,
     long period
-){
+) {
 
 }

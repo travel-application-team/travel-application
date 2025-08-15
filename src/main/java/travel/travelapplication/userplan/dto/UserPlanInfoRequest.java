@@ -7,13 +7,14 @@ import travel.travelapplication.userplan.constant.Status;
 import travel.travelapplication.userplan.domain.UserPlan;
 
 @Builder
-public record UserPlanInfoRequest(String name,
-                                  LocalDate startDate,
-                                  LocalDate endDate,
-                                  Long budget,
-                                  String city,
-                                  String district,
-                                  Status status) {
+public record UserPlanInfoRequest(
+    String name,
+    LocalDate startDate,
+    LocalDate endDate,
+    Long budget,
+    String city,
+    String district,
+    Status status) {
 
   public UserPlan toEntity() {
     return UserPlan.builder()

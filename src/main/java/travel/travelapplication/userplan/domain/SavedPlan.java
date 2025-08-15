@@ -11,14 +11,14 @@ import travel.travelapplication.plan.domain.Plan;
 @Getter
 public class SavedPlan {
 
-    @Id
-    private ObjectId id;
+  @Id
+  private ObjectId id;
 
-    @DBRef
-    private Plan plan;
+  @DBRef
+  private Plan plan;
 
-    public SavedPlan(Plan plan) {
-        this.plan = plan;
-    }
+  public SavedPlan(Plan plan) {
+    this.plan = plan;
+  }
 
 }

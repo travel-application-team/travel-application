@@ -16,20 +16,21 @@ import travel.travelapplication.userplan.domain.SavedPlan;
 @RestController
 @RequestMapping("/saved-plan")
 public class SavedPlanController {
-    private SavedPlanService service;
 
-    @GetMapping
-    public List<SavedPlan> getSavedPlan() {
-        return service.findAllSavedPlan();
-    }
+  private SavedPlanService service;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<SavedPlan> findSavedPlan(@RequestParam(name = "id") ObjectId id) {
-        SavedPlan savedPlan = service.findById(id);
-        return ResponseEntity.ok(new SavedPlan(savedPlan.getPlan()));
-    }
+  @GetMapping
+  public List<SavedPlan> getSavedPlan() {
+    return service.findAllSavedPlan();
+  }
 
-    @DeleteMapping("/{id}")
-    public void deleteSavedPlan(@RequestParam(name = "id") ObjectId id) {
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<SavedPlan> findSavedPlan(@RequestParam(name = "id") ObjectId id) {
+    SavedPlan savedPlan = service.findById(id);
+    return ResponseEntity.ok(new SavedPlan(savedPlan.getPlan()));
+  }
+
+  @DeleteMapping("/{id}")
+  public void deleteSavedPlan(@RequestParam(name = "id") ObjectId id) {
+  }
 }

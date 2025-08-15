@@ -5,4 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import travel.travelapplication.userplan.domain.SavedPlan;
 
 public interface SavedPlanRepository extends MongoRepository<SavedPlan, ObjectId> {
+
 }

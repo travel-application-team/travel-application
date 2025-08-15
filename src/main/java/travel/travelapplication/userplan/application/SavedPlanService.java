@@ -10,15 +10,16 @@ import travel.travelapplication.userplan.domain.SavedPlan;
 @AllArgsConstructor
 @Service
 public class SavedPlanService {
-    private SavedPlanRepository repository;
 
-    public List<SavedPlan> findAllSavedPlan() {
-        return repository.findAll();
-    }
+  private SavedPlanRepository repository;
+
+  public List<SavedPlan> findAllSavedPlan() {
+    return repository.findAll();
+  }
 
 
-    public SavedPlan findById(ObjectId id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(id + "not found"));
-    }
+  public SavedPlan findById(ObjectId id) {
+    return repository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException(id + "not found"));
+  }
 }

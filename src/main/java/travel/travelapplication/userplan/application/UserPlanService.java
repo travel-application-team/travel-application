@@ -35,7 +35,7 @@ public class UserPlanService {
   public UserPlan createNewUserPlan(User user, UserPlanInfoRequest userPlanInfoRequest) {
     UserPlan userPlan = userPlanInfoRequest.toEntity();
 
-    UserPlan savedUserPlan = userPlanRepository.insert(userPlan);
+    UserPlan savedUserPlan = userPlanRepository.save(userPlan);
 
     List<UserPlan> userPlans = user.getUserPlans();
     userPlans.add(savedUserPlan);
