@@ -7,7 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import travel.travelapplication.auth.CustomOAuth2User;
-import travel.travelapplication.dto.tag.TagDtoList;
+import travel.travelapplication.place.dto.TagListForm;
+import travel.travelapplication.place.dto.TagListResponse;
 import travel.travelapplication.place.application.TagService;
 import travel.travelapplication.place.domain.Tag;
 import travel.travelapplication.user.application.UserService;
@@ -30,22 +31,24 @@ public class TagController {
 
     @GetMapping("/tag")
     public String tagForm(Model model) throws IllegalAccessException {
-        TagDtoList tagDtoList = new TagDtoList();
-        model.addAttribute("tagDtoList", tagDtoList);
+        TagListForm tagListForm = new TagListForm();
+        model.addAttribute("tagListForm", tagListForm);
         return "tagForm";
     }
 
     @PostMapping("/tag")
     public String addTag(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-                         @ModelAttribute TagDtoList tagDtoList, Model model) throws IllegalAccessException {
-        if(tagDtoList.getTagList().size() < 3) {
+                         @ModelAttribute TagListForm tagListForm, Model model) throws IllegalAccessException {
+        if(tagListForm.getTagList().size() < 3) {
             model.addAttribute("errorMessage", "3개 이상의 태그를 선택하세요.");
+            model.addAttribute("tagListForm", tagListForm);
             return "tagForm";
         }
 
+        TagListResponse response = new TagListResponse(tagListForm.getTagList());
         User user = userService.findUserByEmail(oAuth2User);
 
-        userService.addTag(user, tagDtoList.getTagList());
+        userService.addTag(user, response.tagList());
 
         return "redirect:/";
     }

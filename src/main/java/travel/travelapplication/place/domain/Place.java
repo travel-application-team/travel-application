@@ -5,7 +5,7 @@ import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import travel.travelapplication.constant.Category;
+import travel.travelapplication.place.constant.Category;
 
 import java.util.ArrayList;
 import java.util.List;

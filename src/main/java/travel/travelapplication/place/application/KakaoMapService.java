@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import travel.travelapplication.auth.dto.SessionUser;
-import travel.travelapplication.place.response.MapApiResponse;
+import travel.travelapplication.place.dto.MapApiResponse;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -11,7 +11,7 @@
         <h2>리뷰 키워드 선택</h2>
     </div>
     <div th:if="${errorMessage}" style="color: red;" th:text="${errorMessage}"></div><br>
-    <form action="tagForm.html" th:action th:object="${tagDtoList}" method="post">
+    <form action="tagForm.html" th:action th:object="${tagListResponse}" method="post">
         <div th:each="tag : ${tags}">
             <input type="checkbox" th:field="*{tagList}" th:value="${tag.key}">
             <label th:for="${#ids.prev('tagList')}" th:text="${tag.value}">리뷰 키워드1</label>
