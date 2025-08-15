@@ -31,8 +31,8 @@ public class TagController {
 
     @GetMapping("/tag")
     public String tagForm(Model model) throws IllegalAccessException {
-        TagListResponse tagListResponse = new TagListResponse(new ArrayList<>());
-        model.addAttribute("tagListResponse", tagListResponse);
+        TagListForm tagListForm = new TagListForm();
+        model.addAttribute("tagListForm", tagListForm);
         return "tagForm";
     }
 
@@ -41,6 +41,7 @@ public class TagController {
                          @ModelAttribute TagListForm tagListForm, Model model) throws IllegalAccessException {
         if(tagListForm.getTagList().size() < 3) {
             model.addAttribute("errorMessage", "3개 이상의 태그를 선택하세요.");
+            model.addAttribute("tagListForm", tagListForm);
             return "tagForm";
         }
 
