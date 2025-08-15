@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.auth.dto.OAuthAttributes;
-import travel.travelapplication.constant.Role;
+import travel.travelapplication.auth.constant.Role;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.repository.UserRepository;
 

@@ -3,27 +3,25 @@ package travel.travelapplication.plan.presentation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators.Mod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import travel.travelapplication.auth.CustomOAuth2User;
-import travel.travelapplication.dto.plan.CommentDto;
-import travel.travelapplication.dto.plan.ReplyDto;
-import travel.travelapplication.place.domain.Place;
+import travel.travelapplication.plan.dto.CommentRequest;
+import travel.travelapplication.plan.dto.ReplyRequest;
 import travel.travelapplication.plan.application.CommentService;
 import travel.travelapplication.plan.domain.Comment;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.plan.application.PlanService;
 import travel.travelapplication.plan.repository.PlanRepository;
-import travel.travelapplication.user.application.UserPlanService;
+import travel.travelapplication.userplan.application.UserPlanService;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
 
 import java.util.List;
-import travel.travelapplication.user.domain.UserPlan;
+import travel.travelapplication.userplan.domain.UserPlan;
 
 @RequiredArgsConstructor
 @Controller
@@ -63,7 +61,6 @@ public class PlanController {
         model.addAttribute("userPlan", userPlan);
         model.addAttribute("savedPlans", savedPlans);
         model.addAttribute("comments", comments);
-        model.addAttribute("commentDto", new CommentDto());
 
         return "html/plan";
     }
@@ -81,27 +78,27 @@ public class PlanController {
     }
 
     @PostMapping("/community/comment/{planId}")
-    public ResponseEntity<CommentDto> saveCommentToPlan(@PathVariable("planId") ObjectId planId,
-                                                        @RequestBody CommentDto commentDto) {
+    public ResponseEntity<CommentRequest> saveCommentToPlan(@PathVariable("planId") ObjectId planId,
+                                                        @RequestBody CommentRequest commentRequest) {
         Plan plan = planService.findById(planId);
 
-        planService.saveCommentToPlan(plan, commentDto);
+        planService.saveCommentToPlan(plan, commentRequest);
 
-        log.info("commentDto.content: {}", commentDto.getContent());
-        log.info("commentDto.email: {}", commentDto.getEmail());
+        log.info("commentDto.content: {}", commentRequest.content());
+        log.info("commentDto.email: {}", commentRequest.email());
 
-        return ResponseEntity.ok(commentDto);
+        return ResponseEntity.ok(commentRequest);
     }
 
     @PostMapping("/community/reply/{commentId}")
-    public ResponseEntity<ReplyDto> saveReplyToComment(@PathVariable("commentId") ObjectId commentId,
-                                                       @RequestBody ReplyDto replyDto) {
+    public ResponseEntity<ReplyRequest> saveReplyToComment(@PathVariable("commentId") ObjectId commentId,
+                                                       @RequestBody ReplyRequest replyRequest) {
         Comment comment = commentService.findById(commentId);
-        commentService.saveReply(comment, replyDto);
+        commentService.saveReply(comment, replyRequest);
 
-        log.info("replyDto.content: {}", replyDto.getContent());
+        log.info("replyDto.content: {}", replyRequest.content());
 
-        return ResponseEntity.ok(replyDto);
+        return ResponseEntity.ok(replyRequest);
     }
 
     @GetMapping("/{id}")
