@@ -17,7 +17,7 @@ public class SecurityConfig {
   private final CustomOAuth2UserService customOAuth2UserService;
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception { // 예외 처리 핸들러 추가해야 함
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http
         .csrf(CsrfConfigurer::disable)
         .authorizeHttpRequests((authorizeRequests) ->
@@ -38,7 +38,7 @@ public class SecurityConfig {
         )
         .logout((logout) ->
             logout
-                .logoutUrl("/logout") // logout url 다시 확인
+                .logoutUrl("/logout")
                 .clearAuthentication(true)
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")

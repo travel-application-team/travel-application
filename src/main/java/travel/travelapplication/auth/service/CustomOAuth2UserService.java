@@ -29,12 +29,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
     OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-    log.info("userRequest: {}", userRequest);
-    log.info("userRequest client registration: {}", userRequest.getClientRegistration());
-    log.info("access token: {}", userRequest.getAccessToken().getTokenValue());
-    log.info("attribute: {}", oAuth2User.getAttributes());
-    log.info("OAuth2 로그인 요청 진입");
-
     String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
     log.info("registrationId: {}", registrationId);
@@ -52,7 +46,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     User findUser = saveUser(attributes, role, accessToken);
 
     String principalName = findUser.getEmail();
-    log.info("principalName: {}", principalName);
     if (principalName == null || principalName.isEmpty()) {
       throw new IllegalArgumentException("principalName cannot be empty");
     }
