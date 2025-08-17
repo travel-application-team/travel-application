@@ -21,31 +21,35 @@ import java.util.List;
 @Document(collection = "Comment")
 public class Comment {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private ObjectId id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private ObjectId id;
 
-    private String content;
-    private String email;
+  private String content;
+  private String email;
 
-    @CreatedDate
-    private Date createdAt;
+  @CreatedDate
+  private Date createdAt;
 
-    @DBRef
-    private List<Reply> replies =new LinkedList<>();
+  @DBRef
+  private List<Reply> replies = new LinkedList<>();
 
-    @PersistenceCreator
-    public Comment() {
-    }
+  @PersistenceCreator
+  public Comment() {
+  }
 
-    @PersistenceCreator
-    @Builder
-    public Comment(ObjectId id, String content, String email,
-                   Date createdAt, List<Reply> replies) {
-        this.id = id;
-        this.content = content;
-        this.email = email;
-        this.createdAt = createdAt;
-        this.replies = replies;
-    }
+  @PersistenceCreator
+  @Builder
+  public Comment(ObjectId id, String content, String email,
+      Date createdAt, List<Reply> replies) {
+    this.id = id;
+    this.content = content;
+    this.email = email;
+    this.createdAt = createdAt;
+    this.replies = replies;
+  }
+
+  public void addReply(Reply reply) {
+    this.replies.add(reply);
+  }
 }

@@ -17,61 +17,65 @@ import java.util.*;
 @Setter
 public class Plan { // 커뮤니티 public 처리된 UserPlan
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private ObjectId id;
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private ObjectId id;
+  private String name;
 
-    private String userEmail;
+  private String userEmail;
 
-    @CreatedDate
-    private Date createdAt;
+  @CreatedDate
+  private Date createdAt;
 
-    @LastModifiedDate
-    private Date updatedAt;
+  @LastModifiedDate
+  private Date updatedAt;
 
-    @DBRef
-    private UserPlan userPlan;
+  @DBRef
+  private UserPlan userPlan;
 
-    @DBRef
-    private List<Comment> comments = new LinkedList<>();
+  @DBRef
+  private List<Comment> comments = new LinkedList<>();
 
-    @PersistenceCreator
-    public Plan() {
+  @PersistenceCreator
+  public Plan() {
 
+  }
+
+  @PersistenceCreator
+  @Builder
+  public Plan(String name, UserPlan userPlan, String userEmail, List<Comment> comments) {
+    this.name = name;
+    this.userPlan = userPlan;
+    this.userEmail = userEmail;
+    this.comments = comments;
+  }
+
+  public void update(Plan updatedPlan) {
+    Optional.ofNullable(updatedPlan.getName()).ifPresent(none -> this.name = updatedPlan.getName());
+    Optional.ofNullable(updatedPlan.getUserPlan())
+        .ifPresent(none -> this.userPlan = updatedPlan.getUserPlan());
+    Optional.ofNullable(updatedPlan.getUserEmail())
+        .ifPresent(none -> this.userEmail = updatedPlan.getUserEmail());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
     }
-
-    @PersistenceCreator
-    @Builder
-    public Plan(String name, UserPlan userPlan, String userEmail, List<Comment> comments) {
-        this.name = name;
-        this.userPlan = userPlan;
-        this.userEmail = userEmail;
-        this.comments = comments;
+    if (o == null || getClass() != o.getClass()) {
+      return false;
     }
+    Plan plan = (Plan) o;
+    return Objects.equals(id, plan.id);
+  }
 
-    public void update(Plan updatedPlan) {
-        Optional.ofNullable(updatedPlan.getName()).ifPresent(none -> this.name = updatedPlan.getName());
-        Optional.ofNullable(updatedPlan.getUserPlan()).ifPresent(none -> this.userPlan = updatedPlan.getUserPlan());
-        Optional.ofNullable(updatedPlan.getUserEmail()).ifPresent(none -> this.userEmail = updatedPlan.getUserEmail());
-    }
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Plan plan = (Plan) o;
-        return Objects.equals(id, plan.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-
+  public void addComment(Comment comment) {
+    this.comments.add(comment);
+  }
 }
