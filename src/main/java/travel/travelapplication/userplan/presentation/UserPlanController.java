@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -117,15 +118,13 @@ public class UserPlanController {
 
   @PostMapping("/save-places")
   @ResponseBody
-  public ResponseEntity<UserPlan> savePlacesToUserPlan(@RequestBody List<String> selectedPlaceId,
-      @AuthenticationPrincipal CustomOAuth2User oAuth2User)
-      throws IllegalAccessException {
+  public ResponseEntity<UserPlan> savePlacesToUserPlan(@RequestBody List<String> selectedPlaceId) {
     UserPlan userPlan = userPlanService.mergePlacesToUserPlanInfo(selectedPlaceId);
 
     return ResponseEntity.ok(userPlan);
   }
 
-  @PostMapping("/{userPlanId}/user-plan-info")
+  @PutMapping("/{userPlanId}/user-plan-info")
   public ResponseEntity<UserPlan> updateUserPlanNameAndStatus(
       @PathVariable("userPlanId") ObjectId userPlanId,
       @RequestBody UpdateUserPlanInfoRequest userPlanInfo,
@@ -135,4 +134,13 @@ public class UserPlanController {
 
     return ResponseEntity.ok(userPlan);
   }
+
+  @PutMapping("/{userPlanId}/places")
+  public ResponseEntity<UserPlan> updateUserPlanPlaces(
+      @PathVariable("userPlanId") ObjectId userPlanId,
+      @RequestBody List<String> placeIds) throws IllegalAccessException {
+    UserPlan userPlan = userPlanService.updateUserPlanPlaces(userPlanId, placeIds);
+    return ResponseEntity.ok(userPlan);
+  }
+
 }

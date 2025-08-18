@@ -64,7 +64,20 @@ public class UserPlanService {
         () -> new IllegalAccessException("UserPlan not found with id: " + userPlanId));
   }
 
-  public void updateUserPlanPlaces(UserPlan userPlan, List<Place> places) {
+  public UserPlan updateUserPlanPlaces(ObjectId userPlanId, List<String> placeIds)
+      throws IllegalAccessException {
+    UserPlan userPlan = findById(userPlanId);
+
+    List<Place> places = new ArrayList<>();
+    placeIds.forEach(placeId -> {
+      Place place = placeService.findByPlaceId(placeId);
+      if (place != null) {
+        places.add(place);
+      } else {
+        log.error("Place with id {} not found", placeId);
+      }
+    });
+
     UserPlan updatedUserPlan = UserPlan.builder()
         .name(userPlan.getName())
         .startDate(userPlan.getStartDate())
@@ -79,6 +92,7 @@ public class UserPlanService {
 
     userPlan.update(updatedUserPlan);
     userPlanRepository.save(userPlan);
+    return userPlan;
   }
 
   // TODO: 더 안전한 방법으로 로직 개선 필요 - 고민중

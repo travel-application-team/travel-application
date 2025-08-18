@@ -21,4 +21,8 @@ public class SavedPlanService {
     return savedPlanRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException(id + "not found"));
   }
+
+  public void deleteById(ObjectId id) {
+    savedPlanRepository.deleteById(id);
+  }
 }
