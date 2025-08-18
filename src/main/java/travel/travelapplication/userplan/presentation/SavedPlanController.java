@@ -2,6 +2,7 @@ package travel.travelapplication.userplan.presentation;
 
 import jakarta.transaction.Transactional;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,10 +16,11 @@ import travel.travelapplication.userplan.domain.SavedPlan;
 
 @Transactional
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/saved-plans")
 public class SavedPlanController {
 
-  private SavedPlanService savedPlanService;
+  private final SavedPlanService savedPlanService;
 
   @GetMapping
   public List<SavedPlan> getSavedPlan() {
