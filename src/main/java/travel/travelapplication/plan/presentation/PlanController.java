@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.plan.dto.CommentRequest;
+import travel.travelapplication.plan.dto.PlanResponse;
+import travel.travelapplication.plan.dto.PlanSearchResponse;
 import travel.travelapplication.plan.dto.ReplyRequest;
 import travel.travelapplication.plan.application.CommentService;
 import travel.travelapplication.plan.domain.Comment;
@@ -41,8 +43,8 @@ public class PlanController {
   }
 
   @GetMapping("/community/{planId}")
-  public String plan(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-      @PathVariable("planId") ObjectId planId, Model model) throws IllegalAccessException {
+  public ResponseEntity<PlanResponse> plan(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
+      @PathVariable("planId") ObjectId planId) throws IllegalAccessException {
     User user = userService.findUserByEmail(oAuth2User);
 
     Plan plan = planService.findById(planId);
@@ -51,12 +53,8 @@ public class PlanController {
     List<Plan> savedPlans = user.getSavedPlans();
     List<Comment> comments = plan.getComments();
 
-    model.addAttribute("plan", plan);
-    model.addAttribute("userPlan", userPlan);
-    model.addAttribute("savedPlans", savedPlans);
-    model.addAttribute("comments", comments);
-
-    return "html/plan";
+    PlanResponse planResponse = new PlanResponse(plan, userPlan, savedPlans, comments);
+    return ResponseEntity.ok(planResponse);
   }
 
   @PostMapping("/community/save/{planId}")
@@ -102,18 +100,13 @@ public class PlanController {
   public void deletePlan(@RequestParam(name = "id") ObjectId id) {
   }
 
-  @GetMapping("/search") // 특정 장소가 포함된 지도 조회 (키워드가 없으면 모두 출력)
-  public String planView(Model model,
-      @RequestParam(value = "keyword", required = false) String keyword,
-      @RequestParam(value = "target", required = false) String target) { // target: map, place 구분 (select)
+  @GetMapping("/search")
+  public ResponseEntity<PlanSearchResponse> planView(
+      @RequestParam(value = "keyword", required = false) String keyword) {
+    List<Plan> plans = planService.searchByPlace(keyword);
 
-    if (keyword != null) {
-      List<Plan> findPlans = planService.searchByPlace(keyword);
-      model.addAttribute("findPlans", findPlans);
-    } else {
-      List<Plan> plans = planService.findAll();
-      model.addAttribute("plans", plans);
-    }
-    return null;
+    PlanSearchResponse planSearchResponse = new PlanSearchResponse(plans);
+
+    return ResponseEntity.ok(planSearchResponse);
   }
 }

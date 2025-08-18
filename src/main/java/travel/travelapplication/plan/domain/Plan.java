@@ -50,12 +50,8 @@ public class Plan { // 커뮤니티 public 처리된 UserPlan
     this.comments = comments;
   }
 
-  public void update(Plan updatedPlan) {
-    Optional.ofNullable(updatedPlan.getName()).ifPresent(none -> this.name = updatedPlan.getName());
-    Optional.ofNullable(updatedPlan.getUserPlan())
-        .ifPresent(none -> this.userPlan = updatedPlan.getUserPlan());
-    Optional.ofNullable(updatedPlan.getUserEmail())
-        .ifPresent(none -> this.userEmail = updatedPlan.getUserEmail());
+  public void updateUserPlan(UserPlan userPlan) {
+    this.userPlan = userPlan;
   }
 
   @Override

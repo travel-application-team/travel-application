@@ -18,10 +18,6 @@ public class CommentService {
   private final CommentRepository commentRepository;
   private final ReplyRepository replyRepository;
 
-  public void save(Comment comment) {
-    commentRepository.save(comment);
-  }
-
   public Comment findById(ObjectId id) {
     return commentRepository.findById(id).orElse(null);
   }
@@ -31,6 +27,6 @@ public class CommentService {
     replyRepository.insert(reply);
 
     comment.addReply(reply);
-    save(comment);
+    commentRepository.save(comment);
   }
 }
