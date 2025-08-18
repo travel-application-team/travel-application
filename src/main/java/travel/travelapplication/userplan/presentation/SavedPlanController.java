@@ -14,20 +14,20 @@ import travel.travelapplication.userplan.domain.SavedPlan;
 
 @Transactional
 @RestController
-@RequestMapping("/saved-plan")
+@RequestMapping("/saved-plans")
 public class SavedPlanController {
 
-  private SavedPlanService service;
+  private SavedPlanService savedPlanService;
 
   @GetMapping
   public List<SavedPlan> getSavedPlan() {
-    return service.findAllSavedPlan();
+    return savedPlanService.findAll();
   }
 
   @GetMapping("/{id}")
   public ResponseEntity<SavedPlan> findSavedPlan(@RequestParam(name = "id") ObjectId id) {
-    SavedPlan savedPlan = service.findById(id);
-    return ResponseEntity.ok(new SavedPlan(savedPlan.getPlan()));
+    SavedPlan savedPlan = savedPlanService.findById(id);
+    return ResponseEntity.ok(savedPlan);
   }
 
   @DeleteMapping("/{id}")
