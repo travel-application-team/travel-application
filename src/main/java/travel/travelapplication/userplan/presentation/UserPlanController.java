@@ -11,7 +11,6 @@ import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.auth.dto.SessionUser;
-import travel.travelapplication.place.application.PlaceService;
 import travel.travelapplication.place.application.ProvCityService;
 import travel.travelapplication.place.dto.CreateLikedPlaceRequest;
 import travel.travelapplication.recommendation.application.RecommendationService;
@@ -32,7 +30,6 @@ import travel.travelapplication.userplan.application.UserPlanService;
 import travel.travelapplication.userplan.domain.UserPlan;
 import travel.travelapplication.userplan.dto.UpdateUserPlanInfoRequest;
 import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
-import travel.travelapplication.userplan.repository.UserPlanRepository;
 
 @Controller
 @RequiredArgsConstructor
@@ -41,25 +38,15 @@ import travel.travelapplication.userplan.repository.UserPlanRepository;
 public class UserPlanController {
 
   private final UserPlanService userPlanService;
-  private final UserPlanRepository userPlanRepository;
   private final UserService userService;
-  private final PlaceService placeService;
   private final RecommendationService recommendationService;
   private final ProvCityService provCityService;
 
-  @GetMapping("/single")
-  public String userPlan() {
-    return "html/user-plan";
-  }
-
-  @GetMapping("/list")
-  public ResponseEntity<List<UserPlan>> userPlanList(
-      @AuthenticationPrincipal CustomOAuth2User oAuth2User, Model model)
+  @GetMapping("/{id}")
+  public ResponseEntity<UserPlan> userPlan(@PathVariable("id") ObjectId id)
       throws IllegalAccessException {
-    User user = userService.findUserByEmail(oAuth2User);
-    List<UserPlan> userPlans = userPlanService.findAll(user);
-
-    return ResponseEntity.ok(userPlans);
+    UserPlan userPlan = userPlanService.findById(id);
+    return ResponseEntity.ok(userPlan);
   }
 
   // 서비스로 옮길지, enum으로 바꿀지 고민
