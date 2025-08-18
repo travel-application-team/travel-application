@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
-import travel.travelapplication.userplan.application.UserPlanService;
 import travel.travelapplication.userplan.domain.UserPlan;
 
 @Controller
@@ -23,7 +22,6 @@ import travel.travelapplication.userplan.domain.UserPlan;
 public class UserController {
 
   private final UserService userService;
-  private final UserPlanService userPlanService;
 
   @GetMapping
   public String profile() {

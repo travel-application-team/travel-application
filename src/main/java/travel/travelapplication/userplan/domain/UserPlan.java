@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import lombok.Builder;
 import lombok.Getter;
 import org.bson.types.ObjectId;
@@ -81,25 +80,17 @@ public class UserPlan {
     this.createdAt = Date.from(Instant.now());
   }
 
-  public void update(UserPlan userPlan) {
-    Optional.ofNullable(userPlan.getName())
-        .ifPresent(none -> this.name = userPlan.getName());
-    Optional.ofNullable(userPlan.getStartDate())
-        .ifPresent(none -> this.startDate = userPlan.getStartDate());
-    Optional.ofNullable(userPlan.getEndDate())
-        .ifPresent(none -> this.endDate = userPlan.getEndDate());
-    Optional.ofNullable(userPlan.getBudget())
-        .ifPresent(none -> this.budget = userPlan.getBudget());
-    Optional.ofNullable(userPlan.getCity())
-        .ifPresent(none -> this.city = userPlan.getCity());
-    Optional.ofNullable(userPlan.getDistrict())
-        .ifPresent(none -> this.district = userPlan.getDistrict());
-    Optional.ofNullable(userPlan.getStatus())
-        .ifPresent(none -> this.status = userPlan.getStatus());
-    Optional.ofNullable(userPlan.getPlaces())
-        .ifPresent(none -> this.places = userPlan.getPlaces());
-    Optional.ofNullable(userPlan.getRoutes())
-        .ifPresent(none -> this.routes = userPlan.getRoutes());
+  public void update(String name, Status status) {
+    this.name = name;
+    this.status = status;
+    this.updatedAt = Date.from(Instant.now());
+  }
+
+  public void updatePlaces(List<Place> newPlaces) {
+    if (this.places == null) {
+      this.places = new LinkedList<>();
+    }
+    this.places.addAll(newPlaces);
     this.updatedAt = Date.from(Instant.now());
   }
 

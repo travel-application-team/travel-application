@@ -78,19 +78,7 @@ public class UserPlanService {
       }
     });
 
-    UserPlan updatedUserPlan = UserPlan.builder()
-        .name(userPlan.getName())
-        .startDate(userPlan.getStartDate())
-        .endDate(userPlan.getEndDate())
-        .budget(userPlan.getBudget())
-        .city(userPlan.getCity())
-        .district(userPlan.getDistrict())
-        .status(userPlan.getStatus())
-        .places(places)
-        .routes(userPlan.getRoutes())
-        .build();
-
-    userPlan.update(updatedUserPlan);
+    userPlan.updatePlaces(places);
     userPlanRepository.save(userPlan);
     return userPlan;
   }
@@ -110,23 +98,8 @@ public class UserPlanService {
     UserPlan lastUserPlan = mongoTemplate.findOne(query, UserPlan.class);
 
     if (lastUserPlan != null) {
-      UserPlan updatedUserPlan = UserPlan.builder()
-          .name(userPlan.getName() != null ? userPlan.getName() : lastUserPlan.getName())
-          .startDate(userPlan.getStartDate() != null ? userPlan.getStartDate()
-              : lastUserPlan.getStartDate())
-          .endDate(
-              userPlan.getEndDate() != null ? userPlan.getEndDate() : lastUserPlan.getEndDate())
-          .budget(userPlan.getBudget() != null ? userPlan.getBudget() : lastUserPlan.getBudget())
-          .city(userPlan.getCity() != null ? userPlan.getCity() : lastUserPlan.getCity())
-          .district(
-              userPlan.getDistrict() != null ? userPlan.getDistrict() : lastUserPlan.getDistrict())
-          .status(userPlan.getStatus() != null ? userPlan.getStatus() : lastUserPlan.getStatus())
-          .places(selectedPlaces)
-          .routes(userPlan.getRoutes() != null ? userPlan.getRoutes() : lastUserPlan.getRoutes())
-          .build();
-
       // 병합된 내용으로 lastUserPlan 업데이트
-      lastUserPlan.update(updatedUserPlan);  // lastUserPlan을 직접 업데이트
+      lastUserPlan.updatePlaces(selectedPlaces);  // lastUserPlan을 직접 업데이트
       return userPlanRepository.save(lastUserPlan);  // 병합된 lastUserPlan 저장
     } else {
       return userPlanRepository.save(userPlan);
@@ -168,19 +141,10 @@ public class UserPlanService {
   }
 
   private UserPlan updateNameAndStatus(UserPlan userPlan, UpdateUserPlanInfoRequest request) {
-    UserPlan updatedUserPlan = UserPlan.builder()
-        .name(request.name())
-        .startDate(userPlan.getStartDate())
-        .endDate(userPlan.getEndDate())
-        .budget(userPlan.getBudget())
-        .city(userPlan.getCity())
-        .district(userPlan.getDistrict())
-        .status(request.status())
-        .places(userPlan.getPlaces())
-        .routes(userPlan.getRoutes())
-        .build();
+    String newName = request.name() == null ? userPlan.getName() : request.name();
+    Status newStatus = request.status() == null ? userPlan.getStatus() : request.status();
 
-    userPlan.update(updatedUserPlan);
+    userPlan.update(newName, newStatus);
     userPlanRepository.save(userPlan);
     return userPlan;
   }
