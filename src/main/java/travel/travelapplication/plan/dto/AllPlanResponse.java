@@ -1,10 +1,11 @@
 package travel.travelapplication.plan.dto;
 
 import java.util.Date;
+import org.bson.types.ObjectId;
 
-public record PlanSearchResponse(
+public record AllPlanResponse(
+    ObjectId planId,
     String name,
-    String userEmail,
     Date createdAt
 ) {
 

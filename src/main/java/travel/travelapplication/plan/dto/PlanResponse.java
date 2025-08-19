@@ -1,15 +1,17 @@
 package travel.travelapplication.plan.dto;
 
+import java.util.Date;
 import java.util.List;
-import travel.travelapplication.plan.domain.Comment;
-import travel.travelapplication.plan.domain.Plan;
-import travel.travelapplication.userplan.domain.UserPlan;
+import org.bson.types.ObjectId;
+import travel.travelapplication.userplan.dto.UserPlanInfoResponse;
 
 public record PlanResponse(
-    Plan plan,
-    UserPlan userPlan,
-    List<Plan> savedPlans,
-    List<Comment> comments
+    String userEmail,
+    Date createdAt,
+    Date updatedAt,
+    UserPlanInfoResponse userPlanInfo,
+    List<ObjectId> savedPlans,
+    List<CommentResponse> comments
 ) {
 
 }

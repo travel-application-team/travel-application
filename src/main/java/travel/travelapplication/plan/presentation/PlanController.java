@@ -5,11 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.plan.dto.CommentRequest;
+import travel.travelapplication.plan.dto.AllPlanResponse;
 import travel.travelapplication.plan.dto.PlanResponse;
 import travel.travelapplication.plan.dto.PlanSearchResponse;
 import travel.travelapplication.plan.dto.ReplyRequest;
@@ -25,7 +24,7 @@ import java.util.List;
 import travel.travelapplication.userplan.domain.UserPlan;
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/plans")
 @Slf4j
 public class PlanController {
@@ -36,10 +35,11 @@ public class PlanController {
   private final CommentService commentService;
 
   @GetMapping("/community")
-  public String allPlans(Model model) {
+  public ResponseEntity<List<AllPlanResponse>> allPlans() {
     List<Plan> plans = planRepository.findAll();
-    model.addAttribute("plans", plans);
-    return "html/community";
+    List<AllPlanResponse> allPlans = planService.mapToAllPlanResponses(plans);
+
+    return ResponseEntity.ok(allPlans);
   }
 
   @GetMapping("/community/{planId}")
@@ -50,10 +50,8 @@ public class PlanController {
     Plan plan = planService.findById(planId);
     UserPlan userPlan = plan.getUserPlan();
 
-    List<Plan> savedPlans = user.getSavedPlans();
-    List<Comment> comments = plan.getComments();
+    PlanResponse planResponse = planService.mapToPlanResponse(userPlan, plan, user);
 
-    PlanResponse planResponse = new PlanResponse(plan, userPlan, savedPlans, comments);
     return ResponseEntity.ok(planResponse);
   }
 
@@ -70,7 +68,7 @@ public class PlanController {
     return ResponseEntity.ok(isSaved);
   }
 
-  @PostMapping("/community/comment/{planId}")
+  @PostMapping("/community/{planId}/comment")
   public ResponseEntity<CommentRequest> saveCommentToPlan(@PathVariable("planId") ObjectId planId,
       @RequestBody CommentRequest commentRequest) {
     Plan plan = planService.findById(planId);
@@ -80,7 +78,7 @@ public class PlanController {
     return ResponseEntity.ok(commentRequest);
   }
 
-  @PostMapping("/community/reply/{commentId}")
+  @PostMapping("/community/{commentId}/reply")
   public ResponseEntity<ReplyRequest> saveReplyToComment(
       @PathVariable("commentId") ObjectId commentId,
       @RequestBody ReplyRequest replyRequest) {
@@ -101,12 +99,12 @@ public class PlanController {
   }
 
   @GetMapping("/search")
-  public ResponseEntity<PlanSearchResponse> planView(
+  public ResponseEntity<List<PlanSearchResponse>> planView(
       @RequestParam(value = "keyword", required = false) String keyword) {
     List<Plan> plans = planService.searchByPlace(keyword);
 
-    PlanSearchResponse planSearchResponse = new PlanSearchResponse(plans);
+    List<PlanSearchResponse> planSearchResponses = planService.mapToPlanSearchResponses(plans);
 
-    return ResponseEntity.ok(planSearchResponse);
+    return ResponseEntity.ok(planSearchResponses);
   }
 }
