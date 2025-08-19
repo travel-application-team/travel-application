@@ -1,206 +1,104 @@
 package travel.travelapplication.userplan.presentation;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import travel.travelapplication.auth.CustomOAuth2User;
-import travel.travelapplication.auth.dto.SessionUser;
-import travel.travelapplication.userplan.constant.Status;
-import travel.travelapplication.userplan.dto.UpdateUserPlanInfoRequest;
-import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
-import travel.travelapplication.place.application.PlaceService;
 import travel.travelapplication.place.application.ProvCityService;
+import travel.travelapplication.place.constant.City;
 import travel.travelapplication.recommendation.application.RecommendationService;
-import travel.travelapplication.place.domain.Place;
-import travel.travelapplication.place.domain.ProvCity;
+import travel.travelapplication.recommendation.domain.Recommendation;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
-import travel.travelapplication.userplan.domain.UserPlan;
 import travel.travelapplication.userplan.application.UserPlanService;
+import travel.travelapplication.userplan.domain.UserPlan;
+import travel.travelapplication.userplan.dto.UpdateUserPlanInfoRequest;
+import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
 
-import java.util.*;
-import travel.travelapplication.userplan.repository.UserPlanRepository;
-
-@Controller
+@RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/user-plan")
+@RequestMapping("/user-plans")
 public class UserPlanController {
 
   private final UserPlanService userPlanService;
-  private final UserPlanRepository userPlanRepository;
   private final UserService userService;
-  private final PlaceService placeService;
   private final RecommendationService recommendationService;
   private final ProvCityService provCityService;
 
-  @GetMapping("/single")
-  public String userPlan() {
-    return "html/user-plan";
-  }
-
-  @GetMapping("/list")
-  public String userPlanList(@AuthenticationPrincipal CustomOAuth2User oAuth2User, Model model)
+  @GetMapping("/{id}")
+  public ResponseEntity<UserPlan> userPlan(@PathVariable("id") ObjectId id)
       throws IllegalAccessException {
-    User user = userService.findUserByEmail(oAuth2User);
-    List<UserPlan> userPlans = userPlanService.findAllUserPlan(user);
-    model.addAttribute("userPlans", userPlans);
-
-    return "html/user-plan-list";
-  }
-
-  @GetMapping("/new")
-  public String createUserPlan(Model model) {
-    model.addAttribute("infoSubmitted", false);
-
-    return "html/new-user-plan";
-  }
-
-  @ModelAttribute("statuses")
-  public Status[] statuses() {
-    return Status.values();
-  }
-
-  @ModelAttribute("cities")
-  public Map<String, String> cities() {
-    Map<String, String> cities = new LinkedHashMap<>();
-    cities.put("SEOUL", "서울");
-    cities.put("GYEONGGI", "경기");
-    cities.put("INCHEON", "인천");
-    cities.put("GANGWON", "강원");
-    cities.put("DAEJEON", "대전");
-    cities.put("SEJONG", "세종");
-    cities.put("CHUNGNAM", "충남");
-    cities.put("CHUNGBUK", "충북");
-    cities.put("BUSAN", "부산");
-    cities.put("ULSAN", "울산");
-    cities.put("GYEONGNAM", "경남");
-    cities.put("GYEONGBUK", "경북");
-    cities.put("DAEGU", "대구");
-    cities.put("GWANGJU", "광주");
-    cities.put("JEONNAM", "전남");
-    cities.put("JEONBUK", "전북");
-    cities.put("JEJU", "제주");
-    return cities;
+    UserPlan userPlan = userPlanService.findById(id);
+    return ResponseEntity.ok(userPlan);
   }
 
   @GetMapping("/districts")
   @ResponseBody
-  public List<String> getDistricts(@RequestParam("city") String city) {
-    List<String> districts = new ArrayList<>();
-    Optional<ProvCity> provCities = provCityService.getCity(city);
-
-    if (provCities.isPresent()) {
-      ProvCity provCity = provCities.get();
-      districts = provCity.getDistricts();
-    }
-
-    return districts;
+  public ResponseEntity<List<String>> getDistricts(@RequestParam("city") City city) {
+    List<String> districts = provCityService.getDistrictsByCity(city);
+    return ResponseEntity.ok(districts);
   }
 
   @PostMapping("/plan-info")
-  public String saveUserPlan(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-      @ModelAttribute("userPlan") UserPlanInfoRequest userPlanInfoRequest,
-      Model model)
+  public ResponseEntity<List<Recommendation>> getRecommendations(
+      @AuthenticationPrincipal CustomOAuth2User oAuth2User,
+      @RequestBody UserPlanInfoRequest userPlanInfoRequest)
       throws IllegalAccessException {
     User userInfo = userService.findUserByEmail(oAuth2User);
-    UserPlan userPlan = userPlanService.createNewUserPlan(userInfo, userPlanInfoRequest);
-    recommendationService.sendUserPlanInfo(userPlan, userInfo);
+    UserPlan userPlan = userPlanService.create(userInfo, userPlanInfoRequest);
+    List<Recommendation> recommendations = recommendationService.getRecommendationsByUserPlanInfo(
+        userPlan,
+        userInfo);
 
-    model.addAttribute("infoSubmitted", true);
-
-    model.addAttribute("userPlanId", userPlan.getId());
-    log.info("userPlanId: {} ", userPlan.getId());
-    model.addAttribute("userPlan", userPlanInfoRequest);
-    model.addAttribute("user", userInfo);
-
-    model.addAttribute("likedPlaces", userInfo.getLikedPlaces());
-
-    return "html/new-user-plan";
+    return ResponseEntity.ok(recommendations);
   }
 
   @GetMapping("/{userPlanId}")
-  public String userPlan(@PathVariable("userPlanId") ObjectId userPlanId, Model model)
+  public ResponseEntity<UserPlan> getUserPlan(@PathVariable("userPlanId") ObjectId userPlanId)
       throws IllegalAccessException {
-    UserPlan userPlan = userPlanService.findUserPlanById(userPlanId);
-    model.addAttribute("userPlan", userPlan);
+    UserPlan userPlan = userPlanService.findById(userPlanId);
 
-    return "html/user-plan";
-  }
-
-  @GetMapping("/{userPlanId}/places")
-  public String selectLikedPlaces(HttpServletRequest request, Model model,
-      @PathVariable("userPlanId") ObjectId userPlanId) throws IllegalAccessException {
-    UserPlan userPlan = userPlanService.findUserPlanById(userPlanId);
-
-    HttpSession session = request.getSession();
-    List<SessionUser> places = (List<SessionUser>) session.getAttribute("recommendation-result");
-
-    model.addAttribute("userPlan", userPlan);
-    model.addAttribute("places", places);
-
-    return "test/selectLikedPlacesForm";
+    return ResponseEntity.ok(userPlan);
   }
 
   @PostMapping("/save-places")
   @ResponseBody
-  public Map<String, Object> savePlacesToUserPlan(@RequestBody List<String> selectedPlaceId,
-      Model model,
+  public ResponseEntity<UserPlan> savePlacesToUserPlan(@RequestBody List<String> selectedPlaceId) {
+    UserPlan userPlan = userPlanService.mergePlacesToUserPlanInfo(selectedPlaceId);
+
+    return ResponseEntity.ok(userPlan);
+  }
+
+  @PutMapping("/{userPlanId}/user-plan-info")
+  public ResponseEntity<UserPlan> updateUserPlanNameAndStatus(
+      @PathVariable("userPlanId") ObjectId userPlanId,
+      @RequestBody UpdateUserPlanInfoRequest userPlanInfo,
       @AuthenticationPrincipal CustomOAuth2User oAuth2User)
       throws IllegalAccessException {
-    User user = userService.findUserByEmail(oAuth2User);
-    UserPlan userPlan = new UserPlan();
+    UserPlan userPlan = userPlanService.updateUserPlanInfo(oAuth2User, userPlanId, userPlanInfo);
 
-    List<Place> selectedPlaces = new ArrayList<>();
-
-    for (String placeId : selectedPlaceId) {
-      Place place = placeService.findByPlaceId(placeId);
-      selectedPlaces.add(place);
-    }
-    model.addAttribute("selectedPlaces", selectedPlaces);
-
-    userPlanService.mergePlacesToUserPlanInfo(userPlan, selectedPlaces);
-    log.info("merge successful");
-
-    model.addAttribute("userPlan", userPlan);
-    log.info("userPlan added");
-
-    // JSON으로 변환
-    Map<String, Object> response = new HashMap<>();
-//        response.put("selectedPlaces", selectedPlaces);
-//        response.put("userPlan", userPlanInfo);
-    response.put("redirectUrl", "/home");
-
-    log.info(selectedPlaces.toString());
-
-    return response;
+    return ResponseEntity.ok(userPlan);
   }
 
-  @GetMapping("/{userPlanId}/user-plan-info")
-  public String updateUserPlanNameAndStatusForm(@PathVariable("userPlanId") ObjectId userPlanId,
-      Model model) throws IllegalAccessException {
-    UserPlan userPlan = userPlanService.findUserPlanById(userPlanId);
-    model.addAttribute("userPlan", userPlan);
-
-    return "test/editUserPlanInfoForm";
+  @PutMapping("/{userPlanId}/places")
+  public ResponseEntity<UserPlan> updateUserPlanPlaces(
+      @PathVariable("userPlanId") ObjectId userPlanId,
+      @RequestBody List<String> placeIds) throws IllegalAccessException {
+    UserPlan userPlan = userPlanService.updateUserPlanPlaces(userPlanId, placeIds);
+    return ResponseEntity.ok(userPlan);
   }
 
-  @PostMapping("/{userPlanId}/user-plan-info")
-  public String updateUserPlanNameAndStatus(@PathVariable("userPlanId") ObjectId userPlanId,
-      @ModelAttribute("updateUserPlan") UpdateUserPlanInfoRequest userPlanInfo,
-      @AuthenticationPrincipal CustomOAuth2User oAuth2User)
-      throws IllegalAccessException {
-    User user = userService.findUserByEmail(oAuth2User);
-    UserPlan userPlan = userPlanService.findUserPlanById(userPlanId);
-
-    userPlanService.updateUserPlanInfo(user, userPlan, userPlanInfo);
-
-    return "redirect:/home";
-  }
 }

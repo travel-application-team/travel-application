@@ -2,9 +2,8 @@ package travel.travelapplication.userplan.dto;
 
 import java.time.LocalDate;
 import lombok.Builder;
-
-import travel.travelapplication.userplan.constant.Status;
 import travel.travelapplication.userplan.domain.UserPlan;
+import travel.travelapplication.userplan.domain.UserPlan.Status;
 
 @Builder
 public record UserPlanInfoRequest(
