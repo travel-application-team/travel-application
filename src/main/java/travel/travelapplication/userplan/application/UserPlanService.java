@@ -35,7 +35,7 @@ public class UserPlanService {
   private final PlanRepository planRepository;
   private final PlanService planService;
   private final PlaceService placeService;
-  private MongoTemplate mongoTemplate;
+  private final MongoTemplate mongoTemplate;
 
   public UserPlan create(User user, UserPlanInfoRequest userPlanInfoRequest) {
     UserPlan userPlan = userPlanInfoRequest.toEntity();
