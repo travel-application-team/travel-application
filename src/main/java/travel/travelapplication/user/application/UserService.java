@@ -94,11 +94,14 @@ public class UserService {
     }
   }
 
-  public UserResponse getUserInfo(User user) {
+  public UserResponse getUserInfo(CustomOAuth2User oAuth2User) throws IllegalAccessException {
+    User user = findUserByEmail(oAuth2User);
     return UserResponse.fromEntity(user);
   }
 
-  public List<UserPlanListItemResponse> findUserPlanList(User user) {
+  public List<UserPlanListItemResponse> findUserPlanList(CustomOAuth2User oAuth2User)
+      throws IllegalAccessException {
+    User user = findUserByEmail(oAuth2User);
     List<UserPlan> userPlans = user.getUserPlans();
 
     return userPlans.stream()

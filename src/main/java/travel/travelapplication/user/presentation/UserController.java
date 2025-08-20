@@ -29,8 +29,7 @@ public class UserController {
   public ResponseEntity<UserResponse> updateUsernameForm(
       @AuthenticationPrincipal CustomOAuth2User oAuth2User)
       throws IllegalAccessException {
-    User user = userService.findUserByEmail(oAuth2User);
-    UserResponse userResponse = userService.getUserInfo(user);
+    UserResponse userResponse = userService.getUserInfo(oAuth2User);
 
     return ResponseEntity.ok(userResponse);
   }
@@ -49,10 +48,8 @@ public class UserController {
   public ResponseEntity<List<UserPlanListItemResponse>> userPlans(
       @AuthenticationPrincipal CustomOAuth2User oAuth2User)
       throws IllegalAccessException {
-    User user = userService.findUserByEmail(oAuth2User);
-
     List<UserPlanListItemResponse> userPlanListItemResponse = userService.findUserPlanList(
-        user);
+        oAuth2User);
 
     return ResponseEntity.ok(userPlanListItemResponse);
   }
