@@ -45,7 +45,7 @@ public class UserPlanService {
     List<UserPlan> userPlans = user.getUserPlans();
     userPlans.add(savedUserPlan);
 
-    user.update(user);
+//    user.update(user);
     userService.save(user);
 
     if (isPublic(userPlan.getStatus())) {
@@ -113,7 +113,7 @@ public class UserPlanService {
     User user = userService.findUserByEmail(oAuth2User);
     UserPlan updatedUserPlan = updateNameAndStatus(userPlan, updateUserPlanInfoRequest);
 
-    user.update(user);
+//    user.update(user);
     userService.save(user);
 
     if (isPublic(userPlan.getStatus())) {
