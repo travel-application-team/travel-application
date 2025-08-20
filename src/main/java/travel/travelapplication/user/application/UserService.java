@@ -12,9 +12,10 @@ import travel.travelapplication.place.domain.Tag;
 import travel.travelapplication.place.repository.TagRepository;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.user.domain.User;
+import travel.travelapplication.user.dto.UserResponse;
 import travel.travelapplication.user.repository.UserRepository;
 import travel.travelapplication.userplan.domain.UserPlan;
-import travel.travelapplication.userplan.dto.AllUserPlanResponse;
+import travel.travelapplication.userplan.dto.UserPlanListItemResponse;
 
 @RequiredArgsConstructor
 @Service
@@ -93,13 +94,14 @@ public class UserService {
     }
   }
 
-  // 위치 괜찮은지 확인 필요
-  public List<AllUserPlanResponse> mapToAllUserPlanResponses(List<UserPlan> userPlans) {
+  public UserResponse getUserInfo(User user) {
+    return UserResponse.fromEntity(user);
+  }
+
+  public List<UserPlanListItemResponse> findUserPlanList(User user) {
+    List<UserPlan> userPlans = user.getUserPlans();
+
     return userPlans.stream()
-        .map(userPlan -> new AllUserPlanResponse(
-            userPlan.getId(),
-            userPlan.getName(),
-            userPlan.getCreatedAt()
-        )).toList();
+        .map(UserPlanListItemResponse::fromEntity).toList();
   }
 }

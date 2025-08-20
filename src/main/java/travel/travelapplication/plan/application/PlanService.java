@@ -37,56 +37,36 @@ public class PlanService {
   public List<PlanListItemResponse> findAll() {
     List<Plan> plans = planRepository.findAll();
 
-    return getPlanListItemResponses(plans);
-  }
-
-  private List<PlanListItemResponse> getPlanListItemResponses(List<Plan> plans) {
     return plans.stream()
-        .map(plan -> new PlanListItemResponse(
-            plan.getId(),
-            plan.getName(),
-            plan.getCreatedAt()
-        )).toList();
+        .map(PlanListItemResponse::fromEntity).toList();
   }
 
   public PlanResponse findPlan(ObjectId planId, User user) {
     Plan plan = findById(planId);
     UserPlan userPlan = plan.getUserPlan();
 
-    return getPlanResponse(user, userPlan, plan);
-  }
-
-  private PlanResponse getPlanResponse(User user, UserPlan userPlan, Plan plan) {
-    UserPlanInfoResponse userPlanInfo = new UserPlanInfoResponse(userPlan.getName(),
-        userPlan.getStartDate(),
-        userPlan.getEndDate(), userPlan.getBudget(), userPlan.getCity(), userPlan.getDistrict(),
-        userPlan.getStatus());
+    UserPlanInfoResponse userPlanInfoResponse = UserPlanInfoResponse.fromEntity(userPlan);
 
     List<ObjectId> savedPlans = user.getSavedPlans().stream()
         .map(Plan::getId)
         .toList();
 
-    List<ReplyResponse> replies = plan.getComments().stream()
-        .flatMap(comment -> comment.getReplies().stream())
-        .map(reply -> new ReplyResponse(reply.getContent(), reply.getEmail())).toList();
+    List<CommentResponse> commentResponses = plan.getComments().stream()
+        .map(comment -> {
+          List<ReplyResponse> replies = comment.getReplies().stream()
+              .map(ReplyResponse::fromEntity)
+              .toList();
+          return CommentResponse.fromEntity(comment, replies);
+        }).toList();
 
-    List<CommentResponse> comments = plan.getComments()
-        .stream()
-        .map(comment -> new CommentResponse(
-            comment.getContent(),
-            comment.getEmail(),
-            replies
-        )).toList();
-
-    return new PlanResponse(plan.getUserEmail(), plan.getCreatedAt(),
-        plan.getUpdatedAt(), userPlanInfo,
-        savedPlans, comments);
+    return PlanResponse.fromEntity(plan, userPlanInfoResponse, savedPlans, commentResponses);
   }
 
   public List<PlanSearchResponse> searchByPlace(String keyword) {
     List<Plan> plans = findByKeyword(keyword);
 
-    return getPlanSearchResponses(plans);
+    return plans.stream()
+        .map(PlanSearchResponse::fromEntity).toList();
   }
 
   private List<Plan> findByKeyword(String keyword) {
@@ -95,15 +75,6 @@ public class PlanService {
     } else {
       return planRepository.findAll();
     }
-  }
-
-  private List<PlanSearchResponse> getPlanSearchResponses(List<Plan> plans) {
-    return plans.stream()
-        .map(plan -> new PlanSearchResponse(
-            plan.getName(),
-            plan.getUserEmail(),
-            plan.getCreatedAt()
-        )).toList();
   }
 
   public boolean toggleSavePlan(User user, ObjectId planId) throws IllegalAccessException {

@@ -10,8 +10,7 @@ import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.dto.UserResponse;
-import travel.travelapplication.userplan.domain.UserPlan;
-import travel.travelapplication.userplan.dto.AllUserPlanResponse;
+import travel.travelapplication.userplan.dto.UserPlanListItemResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,8 +30,7 @@ public class UserController {
       @AuthenticationPrincipal CustomOAuth2User oAuth2User)
       throws IllegalAccessException {
     User user = userService.findUserByEmail(oAuth2User);
-
-    UserResponse userResponse = new UserResponse(user.getName(), user.getEmail());
+    UserResponse userResponse = userService.getUserInfo(user);
 
     return ResponseEntity.ok(userResponse);
   }
@@ -48,15 +46,14 @@ public class UserController {
   }
 
   @GetMapping("/user-plan")
-  public ResponseEntity<List<AllUserPlanResponse>> userPlans(
+  public ResponseEntity<List<UserPlanListItemResponse>> userPlans(
       @AuthenticationPrincipal CustomOAuth2User oAuth2User)
       throws IllegalAccessException {
     User user = userService.findUserByEmail(oAuth2User);
-    List<UserPlan> userPlans = user.getUserPlans();
 
-    List<AllUserPlanResponse> allUserPlanResponses = userService.mapToAllUserPlanResponses(
-        userPlans);
+    List<UserPlanListItemResponse> userPlanListItemResponse = userService.findUserPlanList(
+        user);
 
-    return ResponseEntity.ok(allUserPlanResponses);
+    return ResponseEntity.ok(userPlanListItemResponse);
   }
 }
