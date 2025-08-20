@@ -5,124 +5,84 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.ui.Model;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.plan.dto.CommentRequest;
+import travel.travelapplication.plan.dto.PlanListItemResponse;
+import travel.travelapplication.plan.dto.PlanResponse;
+import travel.travelapplication.plan.dto.PlanSearchResponse;
 import travel.travelapplication.plan.dto.ReplyRequest;
 import travel.travelapplication.plan.application.CommentService;
-import travel.travelapplication.plan.domain.Comment;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.plan.application.PlanService;
-import travel.travelapplication.plan.repository.PlanRepository;
-import travel.travelapplication.userplan.application.UserPlanService;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
 
 import java.util.List;
-import travel.travelapplication.userplan.domain.UserPlan;
 
 @RequiredArgsConstructor
-@Controller
-@RequestMapping("/plans")
+@RestController
+@RequestMapping("/community")
 @Slf4j
 public class PlanController {
-    private final PlanService planService;
-    private final PlanRepository planRepository;
-    private final UserService userService;
-    private final CommentService commentService;
-    private final UserPlanService userPlanService;
 
-    @GetMapping("/community")
-    public String allPlans(Model model) throws IllegalAccessException {
-        List<Plan> plans = planRepository.findAll();
-        model.addAttribute("plans", plans);
-        return "html/community";
-    }
+  private final PlanService planService;
+  private final UserService userService;
+  private final CommentService commentService;
 
-//    @GetMapping("/community/all")
-//    public void getPlans(Model model) {
-//        List<Plan> plans = planRepository.findAll();
-//        model.addAttribute("plans", plans);
-//    }
+  @GetMapping
+  public ResponseEntity<List<PlanListItemResponse>> allPlans() {
+    List<PlanListItemResponse> allPlans = planService.findAll();
 
-    @GetMapping("/community/{planId}")
-    public String plan(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-                       @PathVariable("planId") ObjectId planId, Model model) throws IllegalAccessException {
-        User user = userService.findUserByEmail(oAuth2User);
+    return ResponseEntity.ok(allPlans);
+  }
 
-        Plan plan = planService.findById(planId);
-        UserPlan userPlan = plan.getUserPlan();
+  @GetMapping("/{planId}")
+  public ResponseEntity<PlanResponse> plan(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
+      @PathVariable("planId") ObjectId planId) throws IllegalAccessException {
+    User user = userService.findUserByEmail(oAuth2User);
 
-        List<Plan> savedPlans = user.getSavedPlans();
-        List<Comment> comments = plan.getComments();
+    PlanResponse planResponse = planService.findPlan(planId, user);
 
-        model.addAttribute("userPlan", userPlan);
-        model.addAttribute("savedPlans", savedPlans);
-        model.addAttribute("comments", comments);
+    return ResponseEntity.ok(planResponse);
+  }
 
-        return "html/plan";
-    }
+  @PostMapping("/{planId}/save")
+  public ResponseEntity<Boolean> savePlanToUser(
+      @AuthenticationPrincipal CustomOAuth2User oAuth2User,
+      @PathVariable("planId") ObjectId planId)
+      throws IllegalAccessException {
+    User user = userService.findUserByEmail(oAuth2User);
 
-    @PostMapping("/community/save/{planId}")
-    public ResponseEntity<Boolean> savePlanToUser(@AuthenticationPrincipal CustomOAuth2User oAuth2User,
-                                                  @PathVariable("planId") ObjectId planId, Model model)
-            throws IllegalAccessException {
-        User user = userService.findUserByEmail(oAuth2User);
-        Plan plan = planService.findById(planId);
+    boolean isSaved = planService.toggleSavePlan(user, planId);
 
-        boolean isSaved = planService.saveSelectedPlan(user, plan);
+    return ResponseEntity.ok(isSaved);
+  }
 
-        return ResponseEntity.ok(isSaved);
-    }
+  @PostMapping("/{planId}/comment")
+  public ResponseEntity<CommentRequest> saveCommentToPlan(@PathVariable("planId") ObjectId planId,
+      @RequestBody CommentRequest commentRequest) {
+    Plan plan = planService.findById(planId);
 
-    @PostMapping("/community/comment/{planId}")
-    public ResponseEntity<CommentRequest> saveCommentToPlan(@PathVariable("planId") ObjectId planId,
-                                                        @RequestBody CommentRequest commentRequest) {
-        Plan plan = planService.findById(planId);
+    planService.saveCommentToPlan(plan, commentRequest);
 
-        planService.saveCommentToPlan(plan, commentRequest);
+    return ResponseEntity.ok(commentRequest);
+  }
 
-        log.info("commentDto.content: {}", commentRequest.content());
-        log.info("commentDto.email: {}", commentRequest.email());
+  @PostMapping("/{commentId}/reply")
+  public ResponseEntity<ReplyRequest> saveReplyToComment(
+      @PathVariable("commentId") ObjectId commentId,
+      @RequestBody ReplyRequest replyRequest) {
+    commentService.saveReplyToComment(commentId, replyRequest);
 
-        return ResponseEntity.ok(commentRequest);
-    }
+    return ResponseEntity.ok(replyRequest);
+  }
 
-    @PostMapping("/community/reply/{commentId}")
-    public ResponseEntity<ReplyRequest> saveReplyToComment(@PathVariable("commentId") ObjectId commentId,
-                                                       @RequestBody ReplyRequest replyRequest) {
-        Comment comment = commentService.findById(commentId);
-        commentService.saveReply(comment, replyRequest);
+  @GetMapping("/search")
+  public ResponseEntity<List<PlanSearchResponse>> planView(
+      @RequestParam(value = "keyword", required = false) String keyword) {
+    List<PlanSearchResponse> planSearchResponses = planService.searchByPlace(keyword);
 
-        log.info("replyDto.content: {}", replyRequest.content());
-
-        return ResponseEntity.ok(replyRequest);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Plan> findPlan(@RequestParam(name = "id") ObjectId id) {
-        Plan plan = planService.findById(id);
-        return ResponseEntity.ok(plan);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deletePlan(@RequestParam(name = "id") ObjectId id) {
-    }
-
-    @GetMapping("/search") // 특정 장소가 포함된 지도 조회 (키워드가 없으면 모두 출력)
-    public String planView(Model model,
-                           @RequestParam(value = "keyword", required = false) String keyword,
-                           @RequestParam(value = "target", required = false) String target) { // target: map, place 구분 (select)
-
-        if (keyword != null) {
-            List<Plan> findPlans = planService.searchByPlace(keyword);
-            model.addAttribute("findPlans", findPlans);
-        } else {
-            List<Plan> plans = planService.findAll();
-            model.addAttribute("plans", plans);
-        }
-        return null;
-    }
+    return ResponseEntity.ok(planSearchResponses);
+  }
 }
