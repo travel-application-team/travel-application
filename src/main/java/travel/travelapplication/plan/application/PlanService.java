@@ -79,7 +79,7 @@ public class PlanService {
         )).toList();
   }
 
-  public boolean toggleSavePlan(User user, Plan plan) {
+  public boolean toggleSavePlan(User user, Plan plan) throws IllegalAccessException {
     List<Plan> savedPlans = user.getSavedPlans();
     boolean isSaved = savedPlans.stream()
         .anyMatch(savedPlan -> savedPlan.getId().equals(plan.getId()));
@@ -89,7 +89,7 @@ public class PlanService {
     } else {
       savedPlans.removeIf(savedPlan -> savedPlan.getId().equals(plan.getId()));
     }
-    userService.updateUserSavedPlans(user, savedPlans);
+    userService.updateSavedPlans(user, savedPlans);
     return !isSaved;
   }
 

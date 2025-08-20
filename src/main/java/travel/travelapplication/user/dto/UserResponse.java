@@ -1,7 +1,8 @@
 package travel.travelapplication.user.dto;
 
 public record UserResponse(
-    String username
+    String username,
+    String email
 ) {
 
 }
