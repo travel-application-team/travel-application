@@ -77,17 +77,4 @@ public class User {
     this.likedPlaces = likedPlaces;
   }
 
-//  public void update(User updatedUser) {
-//    Optional.ofNullable(updatedUser.getName()).ifPresent(none -> this.name = updatedUser.getName());
-//    Optional.ofNullable(updatedUser.getEmail())
-//        .ifPresent(none -> this.email = updatedUser.getEmail());
-//    Optional.ofNullable(updatedUser.getUserPlans())
-//        .ifPresent(none -> this.userPlans = updatedUser.getUserPlans());
-//    Optional.ofNullable(updatedUser.getTags()).ifPresent(none -> this.tags = updatedUser.getTags());
-//    Optional.ofNullable(updatedUser.getLikedPlaces())
-//        .ifPresent(none -> this.likedPlaces = updatedUser.getLikedPlaces());
-//    Optional.ofNullable(updatedUser.getSavedPlans())
-//        .ifPresent(none -> this.savedPlans = updatedUser.getSavedPlans());
-//    Optional.ofNullable(updatedUser.role).ifPresent(none -> this.role = updatedUser.getRole());
-//  }
 }
