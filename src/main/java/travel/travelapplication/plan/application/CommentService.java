@@ -22,9 +22,10 @@ public class CommentService {
     return commentRepository.findById(id).orElse(null);
   }
 
-  public void saveReplyToComment(Comment comment, ReplyRequest replyRequest) {
+  public void saveReplyToComment(ObjectId commentId, ReplyRequest replyRequest) {
+    Comment comment = findById(commentId);
     Reply reply = replyRequest.toEntity();
-    replyRepository.insert(reply);
+    replyRepository.save(reply);
 
     comment.addReply(reply);
     commentRepository.save(comment);

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
-import travel.travelapplication.plan.dto.AllPlanResponse;
+import travel.travelapplication.plan.dto.PlanListItemResponse;
 import travel.travelapplication.plan.dto.CommentRequest;
 import travel.travelapplication.plan.domain.Comment;
 import travel.travelapplication.plan.domain.Plan;
@@ -34,16 +34,29 @@ public class PlanService {
         .orElseThrow(() -> new IllegalArgumentException("not found:" + id));
   }
 
-  public List<AllPlanResponse> mapToAllPlanResponses(List<Plan> plans) {
+  public List<PlanListItemResponse> findAll() {
+    List<Plan> plans = planRepository.findAll();
+
+    return getPlanListItemResponses(plans);
+  }
+
+  private List<PlanListItemResponse> getPlanListItemResponses(List<Plan> plans) {
     return plans.stream()
-        .map(plan -> new AllPlanResponse(
+        .map(plan -> new PlanListItemResponse(
             plan.getId(),
             plan.getName(),
             plan.getCreatedAt()
         )).toList();
   }
 
-  public PlanResponse mapToPlanResponse(UserPlan userPlan, Plan plan, User user) {
+  public PlanResponse findPlan(ObjectId planId, User user) {
+    Plan plan = findById(planId);
+    UserPlan userPlan = plan.getUserPlan();
+
+    return getPlanResponse(user, userPlan, plan);
+  }
+
+  private PlanResponse getPlanResponse(User user, UserPlan userPlan, Plan plan) {
     UserPlanInfoResponse userPlanInfo = new UserPlanInfoResponse(userPlan.getName(),
         userPlan.getStartDate(),
         userPlan.getEndDate(), userPlan.getBudget(), userPlan.getCity(), userPlan.getDistrict(),
@@ -70,7 +83,21 @@ public class PlanService {
         savedPlans, comments);
   }
 
-  public List<PlanSearchResponse> mapToPlanSearchResponses(List<Plan> plans) {
+  public List<PlanSearchResponse> searchByPlace(String keyword) {
+    List<Plan> plans = findByKeyword(keyword);
+
+    return getPlanSearchResponses(plans);
+  }
+
+  private List<Plan> findByKeyword(String keyword) {
+    if (keyword != null) {
+      return planRepository.findByPlaceName(keyword);
+    } else {
+      return planRepository.findAll();
+    }
+  }
+
+  private List<PlanSearchResponse> getPlanSearchResponses(List<Plan> plans) {
     return plans.stream()
         .map(plan -> new PlanSearchResponse(
             plan.getName(),
@@ -79,8 +106,10 @@ public class PlanService {
         )).toList();
   }
 
-  public boolean toggleSavePlan(User user, Plan plan) throws IllegalAccessException {
+  public boolean toggleSavePlan(User user, ObjectId planId) throws IllegalAccessException {
+    Plan plan = findById(planId);
     List<Plan> savedPlans = user.getSavedPlans();
+
     boolean isSaved = savedPlans.stream()
         .anyMatch(savedPlan -> savedPlan.getId().equals(plan.getId()));
 
@@ -94,20 +123,12 @@ public class PlanService {
   }
 
   public void saveCommentToPlan(Plan plan,
-      CommentRequest commentRequest) { // 커뮤니티 Plan 댓글 저장 기능 (답글 제외)
+      CommentRequest commentRequest) {
     Comment comment = commentRequest.toEntity();
     commentRepository.save(comment);
 
     plan.addComment(comment);
     planRepository.save(plan);
-  }
-
-  public List<Plan> searchByPlace(String keyword) {
-    if (keyword != null) {
-      return planRepository.findByPlaceName(keyword);
-    } else {
-      return planRepository.findAll();
-    }
   }
 
   public void updatePlanFromUserPlanInfo(Plan plan, UserPlan userPlan) {
