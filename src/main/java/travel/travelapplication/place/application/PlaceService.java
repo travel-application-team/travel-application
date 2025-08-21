@@ -32,7 +32,7 @@ public class PlaceService {
         .orElseThrow(() -> new PlaceNotFoundException(placeId));
   }
 
-  public boolean toggleLikePlace(User user, Long placeId) throws IllegalAccessException {
+  public boolean toggleLikePlace(User user, Long placeId) {
     List<Long> likedPlaces = user.getLikedPlaces();
     boolean isLiked = likedPlaces.stream().anyMatch(likedId -> likedId.equals(placeId));
 

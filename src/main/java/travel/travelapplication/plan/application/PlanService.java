@@ -78,7 +78,7 @@ public class PlanService {
     }
   }
 
-  public boolean toggleSavePlan(User user, ObjectId planId) throws IllegalAccessException {
+  public boolean toggleSavePlan(User user, ObjectId planId) {
     Plan plan = findById(planId);
     List<Plan> savedPlans = user.getSavedPlans();
 
