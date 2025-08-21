@@ -63,8 +63,7 @@ public class UserService {
     return user.getTags();
   }
 
-  public User findUserByEmail(@AuthenticationPrincipal CustomOAuth2User oAuth2User)
-      throws IllegalAccessException {
+  public User findUserByEmail(@AuthenticationPrincipal CustomOAuth2User oAuth2User) {
     if (oAuth2User == null) {
       throw new UserNotAuthorizedException();
     }
@@ -96,13 +95,12 @@ public class UserService {
     }
   }
 
-  public UserResponse getUserInfo(CustomOAuth2User oAuth2User) throws IllegalAccessException {
+  public UserResponse getUserInfo(CustomOAuth2User oAuth2User) {
     User user = findUserByEmail(oAuth2User);
     return UserResponse.fromEntity(user);
   }
 
-  public List<UserPlanListItemResponse> findUserPlanList(CustomOAuth2User oAuth2User)
-      throws IllegalAccessException {
+  public List<UserPlanListItemResponse> findUserPlanList(CustomOAuth2User oAuth2User) {
     User user = findUserByEmail(oAuth2User);
     List<UserPlan> userPlans = user.getUserPlans();
 

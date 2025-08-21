@@ -105,7 +105,7 @@ public class UserPlanService {
   }
 
   public UserPlan updateUserPlanInfo(CustomOAuth2User oAuth2User, ObjectId userPlanId,
-      UpdateUserPlanInfoRequest updateUserPlanInfoRequest) throws IllegalAccessException {
+      UpdateUserPlanInfoRequest updateUserPlanInfoRequest) {
     UserPlan userPlan = findById(userPlanId);
     User user = userService.findUserByEmail(oAuth2User);
     UserPlan updatedUserPlan = updateNameAndStatus(userPlan, updateUserPlanInfoRequest);
