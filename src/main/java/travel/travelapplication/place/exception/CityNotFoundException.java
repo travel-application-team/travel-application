@@ -1,7 +1,6 @@
 package travel.travelapplication.place.exception;
 
-import static com.fasterxml.jackson.databind.type.LogicalType.Map;
-
+import java.util.Map;
 import travel.travelapplication.exception.ErrorCode;
 import travel.travelapplication.exception.TravelException;
 
