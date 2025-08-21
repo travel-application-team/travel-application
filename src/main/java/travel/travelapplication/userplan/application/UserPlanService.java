@@ -46,9 +46,6 @@ public class UserPlanService {
     List<UserPlan> userPlans = user.getUserPlans();
     userPlans.add(savedUserPlan);
 
-//    user.update(user);
-    userService.save(user);
-
     if (isPublic(userPlan.getStatus())) {
       share(savedUserPlan, user);
     }
@@ -112,10 +109,6 @@ public class UserPlanService {
     UserPlan userPlan = findById(userPlanId);
     User user = userService.findUserByEmail(oAuth2User);
     UserPlan updatedUserPlan = updateNameAndStatus(userPlan, updateUserPlanInfoRequest);
-
-//    user.update(user);
-    userService.save(user);
-
     if (isPublic(userPlan.getStatus())) {
       share(updatedUserPlan, user); // 만약 공개로 그대로 두고, 이름을 게속 바꾸면 이름만 다른 동일한 일정이 계속 저장되는 문제 발생
     } else {
