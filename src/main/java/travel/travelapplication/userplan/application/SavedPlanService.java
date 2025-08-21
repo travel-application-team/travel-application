@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.userplan.domain.SavedPlan;
+import travel.travelapplication.userplan.exception.SavedPlanNotFoundException;
 import travel.travelapplication.userplan.repository.SavedPlanRepository;
 
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class SavedPlanService {
 
   public SavedPlan findById(ObjectId id) {
     return savedPlanRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException(id + "not found"));
+        .orElseThrow(() -> new SavedPlanNotFoundException(id));
   }
 
   public void deleteById(ObjectId id) {

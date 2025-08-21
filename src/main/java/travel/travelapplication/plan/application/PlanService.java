@@ -5,19 +5,20 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
-import travel.travelapplication.plan.dto.PlanListItemResponse;
-import travel.travelapplication.plan.dto.CommentRequest;
 import travel.travelapplication.plan.domain.Comment;
 import travel.travelapplication.plan.domain.Plan;
+import travel.travelapplication.plan.dto.CommentRequest;
 import travel.travelapplication.plan.dto.CommentResponse;
+import travel.travelapplication.plan.dto.PlanListItemResponse;
 import travel.travelapplication.plan.dto.PlanResponse;
 import travel.travelapplication.plan.dto.PlanSearchResponse;
 import travel.travelapplication.plan.dto.ReplyResponse;
+import travel.travelapplication.plan.exception.PlanNotFoundException;
 import travel.travelapplication.plan.repository.CommentRepository;
+import travel.travelapplication.plan.repository.PlanRepository;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.userplan.domain.UserPlan;
-import travel.travelapplication.plan.repository.PlanRepository;
 import travel.travelapplication.userplan.dto.UserPlanInfoResponse;
 
 @RequiredArgsConstructor
@@ -31,7 +32,7 @@ public class PlanService {
 
   public Plan findById(ObjectId id) {
     return planRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("not found:" + id));
+        .orElseThrow(() -> new PlanNotFoundException(id));
   }
 
   public List<PlanListItemResponse> findAll() {

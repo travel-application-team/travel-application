@@ -23,6 +23,7 @@ import travel.travelapplication.userplan.domain.UserPlan;
 import travel.travelapplication.userplan.domain.UserPlan.Status;
 import travel.travelapplication.userplan.dto.UpdateUserPlanInfoRequest;
 import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
+import travel.travelapplication.userplan.exception.UserPlanNotFoundException;
 import travel.travelapplication.userplan.repository.UserPlanRepository;
 
 @Service
@@ -59,13 +60,12 @@ public class UserPlanService {
     return userPlan;
   }
 
-  public UserPlan findById(ObjectId userPlanId) throws IllegalAccessException {
-    return userPlanRepository.findById(userPlanId).orElseThrow(
-        () -> new IllegalAccessException("UserPlan not found with id: " + userPlanId));
+  public UserPlan findById(ObjectId id) {
+    return userPlanRepository.findById(id).orElseThrow(
+        () -> new UserPlanNotFoundException(id));
   }
 
-  public UserPlan updateUserPlanPlaces(ObjectId userPlanId, List<String> placeIds)
-      throws IllegalAccessException {
+  public UserPlan updateUserPlanPlaces(ObjectId userPlanId, List<String> placeIds) {
     UserPlan userPlan = findById(userPlanId);
 
     List<Place> places = new ArrayList<>();

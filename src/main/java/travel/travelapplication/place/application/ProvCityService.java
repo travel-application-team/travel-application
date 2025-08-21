@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.place.constant.City;
 import travel.travelapplication.place.domain.ProvCity;
+import travel.travelapplication.place.exception.CityNotFoundException;
 import travel.travelapplication.place.repository.ProvCityRepository;
 
 @Service
@@ -21,6 +22,8 @@ public class ProvCityService {
     if (provCityRepository.findByName(cityName).isPresent()) {
       ProvCity provCity = provCityRepository.findByName(cityName).get();
       districts = provCity.getDistricts();
+    } else {
+      throw new CityNotFoundException(cityName);
     }
 
     return districts;

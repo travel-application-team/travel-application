@@ -1,14 +1,14 @@
 package travel.travelapplication.place.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.place.domain.Place;
+import travel.travelapplication.place.exception.PlaceNotFoundException;
 import travel.travelapplication.place.repository.PlaceRepository;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,17 +19,17 @@ public class PlaceService {
 
   public Place findByName(String name) {
     return placeRepository.findByName(name)
-        .orElseThrow(() -> new IllegalArgumentException("place not found : " + name));
+        .orElseThrow(() -> new PlaceNotFoundException(name));
   }
 
   public Place findById(ObjectId id) {
     return placeRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("place not found : " + id));
+        .orElseThrow(() -> new PlaceNotFoundException(id.toString()));
   }
 
   public Place findByPlaceId(String placeId) {
     return placeRepository.findByPlaceId(placeId)
-        .orElseThrow(() -> new IllegalArgumentException("place not found: " + placeId));
+        .orElseThrow(() -> new PlaceNotFoundException(placeId));
   }
 
   public boolean toggleLikePlace(User user, Long placeId) throws IllegalAccessException {

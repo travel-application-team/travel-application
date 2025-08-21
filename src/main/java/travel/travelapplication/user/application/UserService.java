@@ -13,6 +13,8 @@ import travel.travelapplication.place.repository.TagRepository;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.dto.UserResponse;
+import travel.travelapplication.user.exception.UserNotAuthorizedException;
+import travel.travelapplication.user.exception.UserNotFoundException;
 import travel.travelapplication.user.repository.UserRepository;
 import travel.travelapplication.userplan.domain.UserPlan;
 import travel.travelapplication.userplan.dto.UserPlanListItemResponse;
@@ -28,15 +30,15 @@ public class UserService {
     userRepository.save(user);
   }
 
-  public void updateUserName(User user, String username) throws IllegalAccessException {
+  public void updateUserName(User user, String username) {
     if (user != null) {
       user.updateName(username);
     } else {
-      throw new IllegalAccessException("존재하지 않는 사용자입니다.");
+      throw new UserNotFoundException();
     }
   }
 
-  public void addTag(User user, List<String> tagIds) throws IllegalAccessException {
+  public void addTag(User user, List<String> tagIds) {
     List<ObjectId> objectIdList = tagIds.stream()
         .map(ObjectId::new)
         .collect(Collectors.toList());
@@ -45,26 +47,26 @@ public class UserService {
     if (user != null) {
       user.updateTags(tags);
     } else {
-      throw new IllegalAccessException("존재하지 않는 사용자입니다.");
+      throw new UserNotFoundException();
     }
   }
 
-  public void updateSavedPlans(User user, List<Plan> savedPlans) throws IllegalAccessException {
+  public void updateSavedPlans(User user, List<Plan> savedPlans) {
     if (user != null) {
       user.updateSavedPlans(savedPlans);
     } else {
-      throw new IllegalAccessException("존재하지 않는 사용자입니다.");
+      throw new UserNotFoundException();
     }
   }
 
-  public List<Tag> findAllTag(User user) throws IllegalAccessException {
+  public List<Tag> findAllTag(User user) {
     return user.getTags();
   }
 
   public User findUserByEmail(@AuthenticationPrincipal CustomOAuth2User oAuth2User)
       throws IllegalAccessException {
     if (oAuth2User == null) {
-      throw new IllegalAccessException("인증되지 않은 사용자입니다. 로그인 필요");
+      throw new UserNotAuthorizedException();
     }
 
     String provider = oAuth2User.getRegistrationId();
@@ -82,15 +84,15 @@ public class UserService {
     if (user != null) {
       return user;
     } else {
-      throw new IllegalAccessException("존재하지 않는 사용자입니다.");
+      throw new UserNotFoundException();
     }
   }
 
-  public void updateLikedPlaces(User user, List<Long> likedPlaces) throws IllegalAccessException {
+  public void updateLikedPlaces(User user, List<Long> likedPlaces) {
     if (user != null) {
       user.updateLikedPlaces(likedPlaces);
     } else {
-      throw new IllegalAccessException("존재하지 않는 사용자입니다.");
+      throw new UserNotFoundException();
     }
   }
 

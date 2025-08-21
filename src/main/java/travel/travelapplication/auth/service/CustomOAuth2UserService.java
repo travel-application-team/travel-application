@@ -1,5 +1,6 @@
 package travel.travelapplication.auth.service;
 
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,12 +11,11 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.auth.CustomOAuth2User;
-import travel.travelapplication.auth.dto.OAuthAttributes;
 import travel.travelapplication.auth.constant.Role;
+import travel.travelapplication.auth.dto.OAuthAttributes;
+import travel.travelapplication.auth.exception.PrincipalNameEmptyException;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.repository.UserRepository;
-
-import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +48,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     String principalName = findUser.getEmail();
     if (principalName == null || principalName.isEmpty()) {
-      throw new IllegalArgumentException("principalName cannot be empty");
+      throw new PrincipalNameEmptyException();
     }
 
     return new CustomOAuth2User(
