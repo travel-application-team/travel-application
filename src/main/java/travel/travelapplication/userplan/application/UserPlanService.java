@@ -23,6 +23,7 @@ import travel.travelapplication.userplan.domain.UserPlan;
 import travel.travelapplication.userplan.domain.UserPlan.Status;
 import travel.travelapplication.userplan.dto.UpdateUserPlanInfoRequest;
 import travel.travelapplication.userplan.dto.UserPlanInfoRequest;
+import travel.travelapplication.userplan.exception.UserPlanNotFoundException;
 import travel.travelapplication.userplan.repository.UserPlanRepository;
 
 @Service
@@ -45,9 +46,6 @@ public class UserPlanService {
     List<UserPlan> userPlans = user.getUserPlans();
     userPlans.add(savedUserPlan);
 
-//    user.update(user);
-    userService.save(user);
-
     if (isPublic(userPlan.getStatus())) {
       share(savedUserPlan, user);
     }
@@ -59,13 +57,12 @@ public class UserPlanService {
     return userPlan;
   }
 
-  public UserPlan findById(ObjectId userPlanId) throws IllegalAccessException {
-    return userPlanRepository.findById(userPlanId).orElseThrow(
-        () -> new IllegalAccessException("UserPlan not found with id: " + userPlanId));
+  public UserPlan findById(ObjectId id) {
+    return userPlanRepository.findById(id).orElseThrow(
+        () -> new UserPlanNotFoundException(id));
   }
 
-  public UserPlan updateUserPlanPlaces(ObjectId userPlanId, List<String> placeIds)
-      throws IllegalAccessException {
+  public UserPlan updateUserPlanPlaces(ObjectId userPlanId, List<String> placeIds) {
     UserPlan userPlan = findById(userPlanId);
 
     List<Place> places = new ArrayList<>();
@@ -108,14 +105,10 @@ public class UserPlanService {
   }
 
   public UserPlan updateUserPlanInfo(CustomOAuth2User oAuth2User, ObjectId userPlanId,
-      UpdateUserPlanInfoRequest updateUserPlanInfoRequest) throws IllegalAccessException {
+      UpdateUserPlanInfoRequest updateUserPlanInfoRequest) {
     UserPlan userPlan = findById(userPlanId);
     User user = userService.findUserByEmail(oAuth2User);
     UserPlan updatedUserPlan = updateNameAndStatus(userPlan, updateUserPlanInfoRequest);
-
-//    user.update(user);
-    userService.save(user);
-
     if (isPublic(userPlan.getStatus())) {
       share(updatedUserPlan, user); // 만약 공개로 그대로 두고, 이름을 게속 바꾸면 이름만 다른 동일한 일정이 계속 저장되는 문제 발생
     } else {
