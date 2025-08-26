@@ -21,7 +21,7 @@ public class TagController {
   private final UserService userService;
   private final TagService tagService;
 
-  @ModelAttribute("/tags")
+  @GetMapping("/tags")
   public List<String> tags() {
     return tagService.findAll();
   }
@@ -35,7 +35,7 @@ public class TagController {
     return ResponseEntity.ok(tagListResponse);
   }
 
-  @GetMapping("/myroom/member/taglist")
+  @GetMapping("/myroom/taglist")
   public ResponseEntity<TagListResponse> userTagList(
       @AuthenticationPrincipal CustomOAuth2User oAuth2User) {
     TagListResponse tagListResponse = userService.findAllTag(oAuth2User);
