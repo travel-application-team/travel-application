@@ -20,6 +20,9 @@ public enum ErrorCode {
   PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE001", "장소를 찾을 수 없습니다."),
   CITY_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE002", "해당 도시를 찾을 수 없습니다."),
 
+  // Tag
+  INVALID_TAG_SELECTION(HttpStatus.BAD_REQUEST, "TAG001","태그 선택이 유효하지 않습니다."),
+
   // Plan
   PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "PLAN001", "Plan이 없습니다."),
 

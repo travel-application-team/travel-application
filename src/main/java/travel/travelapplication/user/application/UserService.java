@@ -9,6 +9,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.place.domain.Tag;
+import travel.travelapplication.place.dto.TagListResponse;
+import travel.travelapplication.place.exception.InvalidTagSelectionException;
 import travel.travelapplication.place.repository.TagRepository;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.user.domain.User;
@@ -38,17 +40,25 @@ public class UserService {
     }
   }
 
-  public void addTag(User user, List<String> tagIds) {
+  public TagListResponse addTag(CustomOAuth2User oAuth2User, List<String> tagIds) {
+    if (tagIds.size() < 3) {
+      throw new InvalidTagSelectionException(tagIds.size());
+    }
+
     List<ObjectId> objectIdList = tagIds.stream()
         .map(ObjectId::new)
         .collect(Collectors.toList());
     List<Tag> tags = tagRepository.findAllById(objectIdList);
+
+    User user = findUserByEmail(oAuth2User);
 
     if (user != null) {
       user.updateTags(tags);
     } else {
       throw new UserNotFoundException();
     }
+
+    return TagListResponse.fromEntity(tags);
   }
 
   public void updateSavedPlans(User user, List<Plan> savedPlans) {
@@ -59,8 +69,10 @@ public class UserService {
     }
   }
 
-  public List<Tag> findAllTag(User user) {
-    return user.getTags();
+  public TagListResponse findAllTag(CustomOAuth2User oAuth2User) {
+    User user = findUserByEmail(oAuth2User);
+
+    return TagListResponse.fromEntity(user.getTags());
   }
 
   public User findUserByEmail(@AuthenticationPrincipal CustomOAuth2User oAuth2User) {
