@@ -41,7 +41,6 @@ place_info = pd.DataFrame({
 }, index=places_df["tAtsCd"])
 
 features_df.to_pickle("./review_keywords.p")
-features_df.to_pickle("./reviews.p")
 
 # ## 좋아요(평점) 분석
 
@@ -79,7 +78,7 @@ reviews_cols=review_keywords.columns
 
 ## 전체 user
 
-review_keywords = pd.read_pickle('./reviews.p')
+review_keywords = pd.read_pickle('./review_keywords.p')
 
 from sklearn.linear_model import LinearRegression
 
@@ -196,10 +195,6 @@ def to_json_records(df) -> Response:
     # 자바에서 바로 List<Recommendation>로 역직렬화할 수 있도록 records 배열로 반환
     data_json = df.to_json(orient='records', force_ascii=False)
     return Response(data_json, content_type='application/json; charset=utf-8')
-
-@app.route('/data', methods=['GET'])
-def get_data():
-    return to_json_records(final_df)
 
 @app.route('/send-places', methods=['POST'])
 def send_places():
