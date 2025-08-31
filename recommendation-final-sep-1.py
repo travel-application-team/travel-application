@@ -9,12 +9,9 @@ import matplotlib.font_manager as fm
 
 
 # In[2]:
-
-from flask import Flask, jsonify, Response
 import pandas as pd
 import requests
 import math
-import json
 import random
 import pickle
 
@@ -83,8 +80,6 @@ jeonbuk_codes=["52111", "52113", "52130", "52140", "52180", "52190",
                "52210", "52710", "52720", "52730", "52740", "52750",
                "52770", "52790", "52800"] # 52
 
-
-app = Flask(__name__)
 
 API_URL="http://apis.data.go.kr/B551011/TarRlteTarService1/areaBasedList1"
 SERVICE_KEY="41fd329d3da1b3a48fa07d3f2a01696145aa2d63d0e9294fe5f28dff30b7716d"
@@ -159,9 +154,6 @@ for sigungu_code in jeonbuk_codes:
 final_df=pd.concat(all_dataframes, ignore_index=True)
 
 final_df.to_pickle("jeonbuk_data.pkl")
-
-if __name__ == "__main__":
-    app.run(debug=True)
 
 
 files=["seoul_data.pkl", "busan_data.pkl", "daegu_data.pkl", "incheon_data.pkl",
