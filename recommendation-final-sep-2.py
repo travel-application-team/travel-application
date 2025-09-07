@@ -21,7 +21,7 @@ places_df = pd.read_pickle("places_data.pkl")
 with open("review_keywords.pkl", "rb") as f:
     keywords_list = pickle.load(f)
 
-# 모든 장소의 모든 키워드를 0으로 초기화
+# 포함된 키워드만 1로 변경, 나머지는 0
 def one_hot_keywords(row_keywords, all_keywords):
     s = pd.Series(0, index=all_keywords, dtype="int8")
     for k in row_keywords:
@@ -41,6 +41,7 @@ place_info = pd.DataFrame({
 }, index=places_df["tAtsCd"])
 
 features_df.to_pickle("./review_keywords.p")
+features_df.to_pickle("./reviews.p")
 
 # ## 좋아요(평점) 분석
 
@@ -78,7 +79,7 @@ reviews_cols=review_keywords.columns
 
 ## 전체 user
 
-review_keywords = pd.read_pickle('./review_keywords.p')
+review_keywords = pd.read_pickle('./reviews.p')
 
 from sklearn.linear_model import LinearRegression
 
@@ -104,8 +105,8 @@ alpha = rsearch.best_estimator_.alpha
 # 사용자별로 모델 학습
 user_profile_list = []
 
-for userId in train['userid'].unique():
-    user = train[train['userid'] == userId]
+for userId in train['email'].unique():
+    user = train[train['email'] == email]
     x_train = user[review_keywords.columns]  # 특성
     y_train = user['like']  # 라벨
 
@@ -122,7 +123,7 @@ user_profiles = pd.DataFrame(user_profile_list, index=train['userid'].unique(), 
                             columns=['intercept', *review_keywords.columns])
 
 user_profile_lasso = pd.DataFrame(user_profile_list,
-                            index=train['userid'].unique(),
+                            index=train['email'].unique(),
                             columns=['intercept', *review_keywords.columns])
 
 
@@ -137,7 +138,7 @@ from tqdm import tqdm_notebook
 predict = []
 
 for idx, row in tqdm_notebook(test.iterrows()):
-  user = row['userid'] # test row에 user 데이터가 들어옴
+  user = row['email'] # test row에 user 데이터가 들어옴
 
   # 해당 user의 profile에서 intercept 값을 가져옴
   intercept = user_profile_lasso.loc[user, 'intercept']
@@ -196,6 +197,10 @@ def to_json_records(df) -> Response:
     data_json = df.to_json(orient='records', force_ascii=False)
     return Response(data_json, content_type='application/json; charset=utf-8')
 
+@app.route('/data', methods=['GET'])
+def get_data():
+    return to_json_records(final_df)
+
 @app.route('/send-places', methods=['POST'])
 def send_places():
     try:
@@ -224,12 +229,19 @@ def send_places():
         if col not in base_df.columns:
             return jsonify({"message": f"'{col}' column not found in result table"}), 500
 
-    base_df = base_df[(base_df["city"] == city) & (base_df["district"] == district)]
+    base_df = base_df[
+        (base_df["email"] == email) &
+        (base_df["city"] == city) & 
+        (base_df["district"] == district)]
 
     if base_df.empty:
-        return jsonify([]), 200
-
-    result_df = base_df.sort_values("predict_lasso", ascending=False).head(top_k)
+        sample_pool = new_df.copy()
+        if len(sample_pool) > top_k:
+            result_df = sample_pool.sample(n=top_k, random_state=None)
+        else:
+            result_df = sample_pool
+    else:
+        result_df = base_df.sort_values("predict_lasso", ascending=False).head(top_k)
 
     preferred_cols = ["userid", "placeId", "name", "address", "predict_lasso"]
     output_cols = [c for c in preferred_cols if c in result_df.columns]
@@ -241,3 +253,4 @@ def send_places():
 
 if __name__ == '__main__':
     app.run(port=5000)
+
