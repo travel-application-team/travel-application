@@ -21,7 +21,7 @@ public enum ErrorCode {
   CITY_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE002", "해당 도시를 찾을 수 없습니다."),
 
   // Tag
-  INVALID_TAG_SELECTION(HttpStatus.BAD_REQUEST, "TAG001","태그 선택이 유효하지 않습니다."),
+  INVALID_TAG_SELECTION(HttpStatus.BAD_REQUEST, "TAG001", "태그 선택이 유효하지 않습니다."),
 
   // Plan
   PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "PLAN001", "Plan이 없습니다."),
@@ -29,6 +29,11 @@ public enum ErrorCode {
   // User
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER001", "사용자를 찾을 수 없습니다."),
   USER_NOT_AUTHORIZED(HttpStatus.UNAUTHORIZED, "USER002", "인증되지 않은 사용자입니다. 로그인하세요."),
+  USER_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER003", "이미 가입한 사용자입니다."),
+  NAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER004", "이미 존재하는 사용자 이름입니다."),
+  EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "USER005", "이미 존재하는 이메일입니다."),
+  PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "USER006", "비밀번호가 일치하지 않습니다."),
+
 
   // UserPlan
   SAVED_PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_PLAN001", "SavedPlan이 없습니다."),

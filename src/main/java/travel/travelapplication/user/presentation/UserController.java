@@ -1,5 +1,6 @@
 package travel.travelapplication.user.presentation;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import travel.travelapplication.auth.CustomOAuth2User;
+import travel.travelapplication.auth.dto.JoinRequest;
 import travel.travelapplication.user.application.UserService;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.dto.UserResponse;
@@ -19,6 +21,13 @@ import travel.travelapplication.userplan.dto.UserPlanListItemResponse;
 public class UserController {
 
   private final UserService userService;
+
+  @PostMapping("/join")
+  public ResponseEntity<UserResponse> join(@Valid @RequestBody JoinRequest joinRequest) {
+    UserResponse userResponse = userService.join(joinRequest);
+
+    return ResponseEntity.ok(userResponse);
+  }
 
   @GetMapping
   public String profile() {
