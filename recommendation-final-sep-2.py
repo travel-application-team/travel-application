@@ -160,13 +160,6 @@ other_columns2 = test[test.columns[0:4]]
 # 원하는 순서로 열을 재배열하여 새로운 DataFrame을 생성합니다.
 new_df = pd.concat([other_columns2, last_column,other_columns1], axis=1)
 
-final_df = new_df[(new_df['userid']==5) & (new_df['like']==1)].sort_values(by='predict_lasso', ascending=False).head(1)
-
-selected = ['userid', 'placeId', 'name','address', 'predict_lasso']
-
-final_df = final_df[selected]
-
-
 # ## 평가지표
 
 from sklearn.metrics import mean_squared_error
