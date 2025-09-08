@@ -192,7 +192,7 @@ def to_json_records(df) -> Response:
 
 @app.route('/data', methods=['GET'])
 def get_data():
-    return to_json_records(final_df)
+    return to_json_records(new_df)
 
 @app.route('/send-places', methods=['POST'])
 def send_places():
