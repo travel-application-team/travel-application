@@ -1,0 +1,14 @@
+app:
+  export:
+    user-like-csv-path: ./like.csv
+
+server:
+  port:
+spring:
+  datasource:
+    url:
+    username:
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: validate
