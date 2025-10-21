@@ -1,0 +1,53 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main","dev" ]
+  pull_request:
+    branches: [ "main","dev" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    env:
+      SPRING_DATA_MONGODB_URL: mongodb://${{ secrets.MONGO_ROOT_USER }}:${{ secrets.MONGO_ROOT_PASS }}@localhost:27017/testdb
+
+    services:
+      mongodb:
+        image: mongo
+        env:
+          MONGO_INITDB_ROOT_USERNAME: ${{ secrets.MONGO_ROOT_USER }}
+          MONGO_INITDB_ROOT_PASSWORD: ${{ secrets.MONGO_ROOT_PASS }}
+        options: >-
+          --health-cmd "echo 'db.runCommand("ping").ok' | mongosh --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          --name mongo_container
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - uses: actions/checkout@v4
+    - run: touch ./src/main/resources/application.properties
+    - run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+    - run : cat ./src/main/resources/application.properties
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+      
+    - name: Build with Gradle Wrapper
+      run: ./gradlew clean build --warning-mode=all
