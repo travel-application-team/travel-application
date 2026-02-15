@@ -26,6 +26,8 @@ public class User {
 
   private String email;
 
+  private String password;
+
   private String role;
 
   @DBRef
@@ -49,10 +51,11 @@ public class User {
 
   @PersistenceCreator
   @Builder
-  public User(String name, String email, List<UserPlan> userPlans, List<Tag> tags,
+  public User(String name, String email, String password, List<UserPlan> userPlans, List<Tag> tags,
       List<Long> likedPlaces, List<Plan> savedPlans, String role, String accessToken) {
     this.name = name;
     this.email = email;
+    this.password=password;
     this.userPlans = userPlans;
     this.tags = tags;
     this.likedPlaces = likedPlaces;

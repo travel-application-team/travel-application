@@ -1,18 +1,16 @@
 package travel.travelapplication.auth.service;
 
-import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import travel.travelapplication.auth.CustomOAuth2User;
 import travel.travelapplication.auth.constant.Role;
 import travel.travelapplication.auth.dto.OAuthAttributes;
+import travel.travelapplication.auth.dto.PrincipalDetails;
 import travel.travelapplication.auth.exception.PrincipalNameEmptyException;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.repository.UserRepository;
@@ -51,15 +49,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
       throw new PrincipalNameEmptyException();
     }
 
-    return new CustomOAuth2User(
-        Collections.singleton(new SimpleGrantedAuthority(findUser.getRole())),
-        oAuth2User.getAttributes(),
-        attributes.getNameAttributeKey(),
-        findUser.getEmail(),
-        findUser.getName(),
-        findUser.getRole(),
-        registrationId
-    );
+    return new PrincipalDetails(findUser, oAuth2User.getAttributes());
   }
 
   private User saveUser(OAuthAttributes attributes, String role, String accessToken) {

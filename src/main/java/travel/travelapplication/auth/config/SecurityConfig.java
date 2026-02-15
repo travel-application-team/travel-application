@@ -28,6 +28,13 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasAnyRole("ADMIN")
                 .anyRequest().permitAll()
         )
+        .formLogin((formLoginConfigurer) ->
+            formLoginConfigurer.usernameParameter("email")
+                .passwordParameter("password")
+                .loginPage("/loginForm")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/home")
+        )
         .oauth2Login((oauth2Login) ->
             oauth2Login
                 .loginPage("/loginForm")

@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import travel.travelapplication.auth.CustomOAuth2User;
+import travel.travelapplication.auth.dto.JoinRequest;
+import travel.travelapplication.exception.ErrorCode;
 import travel.travelapplication.place.domain.Tag;
 import travel.travelapplication.place.dto.TagListResponse;
 import travel.travelapplication.place.exception.InvalidTagSelectionException;
@@ -15,6 +18,8 @@ import travel.travelapplication.place.repository.TagRepository;
 import travel.travelapplication.plan.domain.Plan;
 import travel.travelapplication.user.domain.User;
 import travel.travelapplication.user.dto.UserResponse;
+import travel.travelapplication.user.exception.DuplicateResourceException;
+import travel.travelapplication.user.exception.PasswordValidationException;
 import travel.travelapplication.user.exception.UserNotAuthorizedException;
 import travel.travelapplication.user.exception.UserNotFoundException;
 import travel.travelapplication.user.repository.UserRepository;
@@ -27,9 +32,48 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final TagRepository tagRepository;
+  private final BCryptPasswordEncoder encoder;
 
   public void save(User user) {
     userRepository.save(user);
+  }
+
+  public UserResponse join(JoinRequest joinRequest) {
+    if (checkNameDuplicate(joinRequest.name())) {
+      throw new DuplicateResourceException(ErrorCode.NAME_ALREADY_EXISTS);
+    }
+
+    if (checkEmailDuplicate(joinRequest.email())) {
+      throw new DuplicateResourceException(ErrorCode.EMAIL_ALREADY_EXISTS);
+    }
+
+    if (checkPasswordMatch(joinRequest.password(), joinRequest.checkPassword())) {
+      throw new PasswordValidationException();
+    }
+
+    checkUserDuplicate(joinRequest.toEntity(encoder.encode(joinRequest.password())));
+    User user = userRepository.save(joinRequest.toEntity(encoder.encode(joinRequest.password())));
+
+    return UserResponse.fromEntity(user);
+  }
+
+  private void checkUserDuplicate(User user) {
+    userRepository.findByEmail(user.getEmail())
+        .ifPresent(m -> {
+          throw new DuplicateResourceException(ErrorCode.USER_ALREADY_EXISTS);
+        });
+  }
+
+  private boolean checkNameDuplicate(String username) {
+    return userRepository.existsByName(username);
+  }
+
+  private boolean checkEmailDuplicate(String email) {
+    return userRepository.findByEmail(email).isEmpty();
+  }
+
+  private boolean checkPasswordMatch(String password, String checkPassword) {
+    return password.equals(checkPassword);
   }
 
   public void updateUserName(User user, String username) {
